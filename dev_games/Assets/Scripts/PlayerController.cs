@@ -82,6 +82,11 @@ public class PlayerController : MonoBehaviour
             // Resetar a rotação em torno do eixo Z (roll)
             playerRb.rotation = Quaternion.Euler(playerRb.rotation.eulerAngles.x, playerRb.rotation.eulerAngles.y, 0f);
         }
+
+        if (Input.GetKey(KeyCode.Mouse1))
+        {
+            playerAnim.SetTrigger("Right_Mouse_Trigger");
+        }
     }
 
     private void OnCollisionEnter(Collision collision)
