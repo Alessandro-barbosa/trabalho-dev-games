@@ -20,10 +20,10 @@ public class ZombieAttack : MonoBehaviour
     void Update()
     {
         zombieAnim.SetBool("IsMoving", AIpath.canMove);
-
-        if(target != null)
+        //Debug.Log(AIpath.canMove);
+        if (target != null)
         {
-            if(Vector3.Distance(target.transform.position, transform.position) > 1.6)
+            if(Vector3.Distance(target.transform.position, transform.position) > 1.8)
             {
                 AIpath.canMove = true;
                 target = null;  
@@ -34,6 +34,8 @@ public class ZombieAttack : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
+        Debug.Log("Colidiu");
+
         if (collision.gameObject.CompareTag("Player"))
         {
             target = collision.gameObject;
