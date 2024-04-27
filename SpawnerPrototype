@@ -1,0 +1,88 @@
+using System.Collections;
+using UnityEngine;
+
+public class ZombieSpawner : MonoBehaviour
+{
+    public GameObject zombieSlowPrefab;
+    public GameObject zombieNormalPrefab;
+    public GameObject zombieFastPrefab;
+
+    public int numWaves = 5;
+    public int zombiesPerWave = 30;
+
+    public float waveInterval = 90.0f; // Tempo em segundos entre as hordas
+
+    public Transform[] spawnPoints;
+
+    private int currentWave = 0;
+
+    void Start()
+    {
+        StartCoroutine(SpawnWaves());
+    }
+
+    IEnumerator SpawnWaves()
+    {
+        while (currentWave < numWaves)
+        {
+            yield return new WaitForSeconds(waveInterval);
+
+            SpawnWave();
+            currentWave++;
+        }
+    }
+
+    void SpawnWave()
+    {
+        GameObject[] zombies = new GameObject[zombiesPerWave];
+        
+        // Tipo de zumbi a ser spawnado de acordo com a horda
+        int numSlow = 0;
+        int numNormal = 0;
+        int numFast = 0;
+
+        switch (currentWave)
+        {
+            case 0:
+                numSlow = zombiesPerWave;
+                break;
+            case 1:
+                numSlow = 15;
+                numNormal = 15;
+                break;
+            case 2:
+                numSlow = 10;
+                numNormal = 15;
+                numFast = 5;
+                break;
+            case 3:
+                numNormal = 15;
+                numFast = 15;
+                break;
+            default:
+                numFast = zombiesPerWave;
+                break;
+        }
+
+        for (int i = 0; i < zombiesPerWave; i++)
+        {
+            GameObject zombiePrefab = null;
+
+            if (i < numSlow)
+                zombiePrefab = zombieSlowPrefab;
+            else if (i < numSlow + numNormal)
+                zombiePrefab = zombieNormalPrefab;
+            else
+                zombiePrefab = zombieFastPrefab;
+
+            // Seleciona um ponto de spawn aleatório
+            int spawnPointIndex = Random.Range(0, spawnPoints.Length);
+            Vector3 spawnPosition = spawnPoints[spawnPointIndex].position;
+            Quaternion spawnRotation = spawnPoints[spawnPointIndex].rotation;
+
+            // Instancia o zumbi no ponto de spawn
+            GameObject zombie = Instantiate(zombiePrefab, spawnPosition, spawnRotation);
+            zombies[i] = zombie;
+        }
+    }
+}
