@@ -18,6 +18,7 @@ public class AimController : MonoBehaviour
     [SerializeField] private Transform spawnBulletPosition;
     [SerializeField] private Transform pfBulletProjectile;
     [SerializeField] private Rig aimRig;
+    [SerializeField] private float playerLife;
 
     private Transform a;
 
@@ -40,6 +41,7 @@ public class AimController : MonoBehaviour
         thirdPersonController = GetComponent<ThirdPersonController>();
         starterAssetsInputs = GetComponent<StarterAssetsInputs>();
         animator = GetComponent<Animator>();
+        playerLife = 100;
     }
     private void Update()
     {
@@ -116,5 +118,9 @@ public class AimController : MonoBehaviour
         if (starterAssetsInputs.getAxe){
             animator.SetBool("Axe_B", true);
         }
+    }
+    public void getHitZombie(float damage)
+    {
+        playerLife -= damage;
     }
 }
