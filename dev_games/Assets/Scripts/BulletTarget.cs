@@ -4,15 +4,21 @@ using UnityEngine;
 
 public class BulletTarget : MonoBehaviour
 {
-    // Start is called before the first frame update
+
+    private float normalZombiehp;
+
     void Start()
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
+        normalZombiehp = 10;
+    }    
+    public void bulletHit()
     {
-        
+        if (normalZombiehp <= 0)
+            destroyObject();
+        normalZombiehp -= 2;
+    }
+    private void destroyObject()
+    {
+            Destroy(gameObject);
     }
 }

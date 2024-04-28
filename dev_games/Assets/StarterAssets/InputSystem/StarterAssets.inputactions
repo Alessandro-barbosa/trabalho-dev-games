@@ -7,12 +7,12 @@
             "actions": [
                 {
                     "name": "Move",
-                    "type": "Value",
+                    "type": "PassThrough",
                     "id": "6bc1aaf4-b110-4ff7-891e-5b9fe6f32c4d",
-                    "expectedControlType": "Vector2",
+                    "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": true
+                    "initialStateCheck": false
                 },
                 {
                     "name": "Look",
@@ -54,6 +54,15 @@
                     "name": "Shoot",
                     "type": "Button",
                     "id": "9dd947c9-6498-425c-9c96-7492ad244413",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "Press(behavior=2)",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Axe",
+                    "type": "PassThrough",
+                    "id": "ce8345cd-afa5-4030-8a95-7d35200d224f",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -278,6 +287,17 @@
                     "processors": "",
                     "groups": "Gamepad",
                     "action": "Shoot",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "d128ed46-8bb6-4844-8595-63022d2821b2",
+                    "path": "<Keyboard>/#(2)",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "KeyboardMouse",
+                    "action": "Axe",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
