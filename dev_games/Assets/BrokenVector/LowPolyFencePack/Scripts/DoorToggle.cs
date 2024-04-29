@@ -10,7 +10,7 @@ namespace BrokenVector.LowPolyFencePack
     [RequireComponent(typeof(DoorController))]
 	public class DoorToggle : MonoBehaviour
     {
-
+        public GameObject porta;
         private DoorController doorController;
 
         void Awake()

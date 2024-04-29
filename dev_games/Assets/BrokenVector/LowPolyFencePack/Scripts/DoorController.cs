@@ -9,7 +9,7 @@ namespace BrokenVector.LowPolyFencePack
     [RequireComponent(typeof(Animation))]
     public class DoorController : MonoBehaviour
     {
-
+        public GameObject porta;
         /// <summary>
         /// door state: Open or Closed
         /// </summary>
@@ -112,7 +112,9 @@ namespace BrokenVector.LowPolyFencePack
             if (IsDoorOpen)
                 CloseDoor();
             else
-                OpenDoor();
+            { OpenDoor(); }
+            Collider colisor = porta.GetComponent<Collider>();
+            colisor.enabled = !colisor.enabled;
         }
 
         private void Animate()
