@@ -21,7 +21,6 @@ public class GrowthHorta : MonoBehaviour
     {
         if(estagioDeCrescimento < 2)
         {
-            Debug.Log("Ta funfante");
             tempoCrescimento += Time.deltaTime;
             if (tempoCrescimento > tempoChance)
             {
@@ -64,5 +63,9 @@ public class GrowthHorta : MonoBehaviour
                 }
             }
         }
+    }
+    private void OnMouseDown()
+    {
+        
     }
 }
