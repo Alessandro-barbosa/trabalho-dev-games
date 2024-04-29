@@ -7,6 +7,10 @@ TagManager:
   - Enemy
   - CinemachineTarget
   - FxTemporaire
+  - Alface
+  - Cenoura
+  - Tomate
+  - Cebola
   layers:
   - Default
   - TransparentFX
