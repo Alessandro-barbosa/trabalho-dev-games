@@ -19,6 +19,7 @@ public class AimController : MonoBehaviour
     [SerializeField] private Transform pfBulletProjectile;
     [SerializeField] private Rig aimRig;
     [SerializeField] private float playerLife;
+    
 
     private Transform a;
 
@@ -33,6 +34,8 @@ public class AimController : MonoBehaviour
     public float ClipLenght = 1f;
     public AudioClip audioClip;
     public AudioSource SourceaudioClip;
+    public HealthManager healthManager;
+
 
     private float buttonPressTime = 0;
     private float delayTime = 0.3f;
@@ -121,6 +124,20 @@ public class AimController : MonoBehaviour
     }
     public void getHitZombie(float damage)
     {
+        healthManager.TakeDamage(damage);
         playerLife -= damage;
+        if(playerLife <= 0)
+        {
+            PauseGame();
+        }
+    }
+    public void EatFood(float lifeGain)
+    {
+        playerLife += lifeGain;
+        healthManager.Heal(lifeGain);
+    }
+    void PauseGame()
+    {
+        Time.timeScale = 0;
     }
 }

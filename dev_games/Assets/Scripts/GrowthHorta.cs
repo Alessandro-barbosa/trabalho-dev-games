@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class GrowthHorta : MonoBehaviour
 {
+    private AimController player;
+
     public float tempoCrescimento;
     private float tempoChance = 5f;
     public int estagioDeCrescimento = 0;
@@ -13,13 +15,14 @@ public class GrowthHorta : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        transform.position = new Vector3(transform.position.x, transform.position.y - 20 * tamanhoCrescimento, transform.position.z);
+        player = GameObject.FindGameObjectWithTag("Player").GetComponent<AimController>();
+        HortaReset();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(estagioDeCrescimento < 2)
+        if (estagioDeCrescimento < 2)
         {
             tempoCrescimento += Time.deltaTime;
             if (tempoCrescimento > tempoChance)
@@ -30,8 +33,8 @@ public class GrowthHorta : MonoBehaviour
                     estagioDeCrescimento++;
                     if (estagioDeCrescimento == 1)
                     {
-                        
-                        if(CompareTag("Alface") || CompareTag("Tomate"))
+
+                        if (CompareTag("Alface") || CompareTag("Tomate"))
                         {
                             transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
                             transform.position = new Vector3(transform.position.x, transform.position.y + 20 * tamanhoCrescimento, transform.position.z);
@@ -66,6 +69,15 @@ public class GrowthHorta : MonoBehaviour
     }
     private void OnMouseDown()
     {
-        
+        if (estagioDeCrescimento == 2)
+        {
+            HortaReset();
+            player.EatFood(10);
+        }
+    }
+    public void HortaReset()
+    {
+        estagioDeCrescimento = 0;
+        transform.position = new Vector3(transform.position.x, transform.position.y - 20 * tamanhoCrescimento, transform.position.z);
     }
 }

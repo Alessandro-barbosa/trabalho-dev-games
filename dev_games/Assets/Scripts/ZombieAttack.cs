@@ -9,7 +9,6 @@ public class ZombieAttack : MonoBehaviour
     private GameObject target;
     private Animator zombieAnim;
     private AIPath AIpath;
-    private ZombieSteps zombieSteps;
     private AIDestinationSetter destinationSet;
     private AimController player;
     public float damage;
@@ -21,7 +20,6 @@ public class ZombieAttack : MonoBehaviour
     {
         zombieAnim = GetComponent<Animator>();
         AIpath = GetComponent<AIPath>();
-        zombieSteps = GetComponent<ZombieSteps>();
         destinationSet = GetComponent<AIDestinationSetter>();
         destinationSet.target = GameObject.FindGameObjectWithTag("Player").transform;
         player = GameObject.FindGameObjectWithTag("Player").GetComponent<AimController>();
