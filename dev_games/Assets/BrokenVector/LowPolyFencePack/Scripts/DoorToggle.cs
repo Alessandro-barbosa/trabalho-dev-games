@@ -12,16 +12,37 @@ namespace BrokenVector.LowPolyFencePack
     {
         public GameObject porta;
         private DoorController doorController;
+        private bool playerInsideTriggerDoor = false;
 
         void Awake()
         {
             doorController = GetComponent<DoorController>();
         }
+        //void OnMouseDown()
+        //{
+        //    doorController.ToggleDoor();
+        //}
+        void Update()
+        {
+            if (playerInsideTriggerDoor && Input.GetKeyDown(KeyCode.E))
+            {
+                doorController.ToggleDoor();
+            }
+        }
+        void OnTriggerEnter(Collider other)
+        {
+            if (other.CompareTag("Player"))
+            {
+                playerInsideTriggerDoor = true;
+            }
+        }
 
-	    void OnMouseDown()
-	    {
-	        doorController.ToggleDoor();
-	    }
-
-	}
+        private void OnTriggerExit(Collider other)
+        {
+            if (other.CompareTag("Player"))
+            {
+                playerInsideTriggerDoor = false;
+            }
+        }
+    }
 }

@@ -19,7 +19,7 @@ public class AimController : MonoBehaviour
     [SerializeField] private Transform pfBulletProjectile;
     [SerializeField] private Rig aimRig;
     [SerializeField] private float playerLife;
-    
+
 
     private Transform a;
 
@@ -58,7 +58,6 @@ public class AimController : MonoBehaviour
             debugTransform.position = raycastHit.point;
             mouseWorldPosition = raycastHit.point;
             hitTransform = raycastHit.transform;
-
             enemyTarget = raycastHit.collider.gameObject.GetComponent<BulletTarget>();
         }
         // Player is aiming
@@ -84,16 +83,15 @@ public class AimController : MonoBehaviour
                 animator.SetLayerWeight(2, 1);
                 animator.SetTrigger("Shooting_T");
 
-                if (hitTransform != null){
+                if (hitTransform != null){ // Acertando alguma coisa 
                     if (hitTransform.GetComponent<BulletTarget>() != null){
 
-                        a = Instantiate(vfxHitGreen, debugTransform.position, Quaternion.identity);
+                        a = Instantiate(vfxHitGreen, debugTransform.position, Quaternion.identity); // efeitin da bala no zumbi
                         enemyTarget.bulletHit();
                     }
                     else{
-                        a = Instantiate(vfxHitRed, debugTransform.position, Quaternion.identity);
+                        a = Instantiate(vfxHitRed, debugTransform.position, Quaternion.identity); // efeitin da bala no resto
                     }
-
                 }
                 SourceaudioClip.PlayOneShot(audioClip);
                 if (a != null){
