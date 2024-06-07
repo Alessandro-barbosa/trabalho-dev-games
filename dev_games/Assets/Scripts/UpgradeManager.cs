@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -10,16 +10,14 @@ public class UpgradeManager : MonoBehaviour
     public GameObject upgrade2;
     public GameObject upgrade3;
 
-    // Start is called before the first frame update
     void Start()
     {
 
     }
 
-    // Update is called once per frame
     void Update()
     {
-        if (playerHere && Input.GetKeyDown(KeyCode.E))
+        if (playerHere && Input.GetKeyDown(KeyCode.E)) //Checa se o player está no local e apertou E
         {
             trocarObjetos();
         }
@@ -27,7 +25,7 @@ public class UpgradeManager : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player")) //Confere que o player está no local e muda variavel
         {
             playerHere = true;
         }
@@ -35,15 +33,15 @@ public class UpgradeManager : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player")) //Confere que o player saiu do local e muda variavel
         {
-            playerHere = false;
+            playerHere = false; 
         }
     }
 
     void trocarObjetos()
     {
-        GameObject[] cercaParaSerTrocado = GameObject.FindGameObjectsWithTag(tagToReplace);
+        GameObject[] cercaParaSerTrocado = GameObject.FindGameObjectsWithTag(tagToReplace); //Salva as cercas com a tag para serem trocadas em um vetor
         foreach (GameObject cercaAntiga in cercaParaSerTrocado)
         {
             string nomeCerca = cercaAntiga.name;
@@ -52,7 +50,7 @@ public class UpgradeManager : MonoBehaviour
 
             GameObject newObject = null;
 
-            switch (nomeCerca)
+            switch (nomeCerca) //Checa o nivel de upgrade
             {
                 case "cerca0":
                     newObject = upgrade1;
@@ -71,7 +69,7 @@ public class UpgradeManager : MonoBehaviour
                     break;
             }
 
-            if (newObject != null)
+            if (newObject != null) //Destroi a cerca antiga e coloca a nova
             {
                 Destroy(cercaAntiga);
                 GameObject newCerca = Instantiate(newObject, position, rotation);
@@ -81,7 +79,7 @@ public class UpgradeManager : MonoBehaviour
         }
     }
 
-    string GetNextCercaName(string currentName)
+    string GetNextCercaName(string currentName) //Pega o nome do proximo upgrade
     {
         switch (currentName)
         {
