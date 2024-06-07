@@ -15,6 +15,7 @@ namespace StarterAssets
 		public bool aim;
 		public bool shoot;
 		public bool getAxe;
+		public bool getArm;
 
 		[Header("Movement Settings")]
 		public bool analogMovement;
@@ -58,6 +59,10 @@ namespace StarterAssets
 		{
 			AxeInput(value.isPressed);
 		}
+		public void OnArm(InputValue value)
+		{
+			ArmInput(value.isPressed);
+		}
 #endif
 
 
@@ -91,6 +96,10 @@ namespace StarterAssets
 		public void AxeInput(bool newAxeState)
 		{
 			getAxe = newAxeState;
+		}
+		public void ArmInput(bool newArmState)
+		{
+			getArm = newArmState;
 		}
 
 		private void OnApplicationFocus(bool hasFocus)

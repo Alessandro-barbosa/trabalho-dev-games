@@ -61,12 +61,21 @@
                 },
                 {
                     "name": "Axe",
-                    "type": "PassThrough",
+                    "type": "Button",
                     "id": "ce8345cd-afa5-4030-8a95-7d35200d224f",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
+                    "interactions": "Press(behavior=2)",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Arm",
+                    "type": "Button",
+                    "id": "15394c01-4fd0-41c6-9415-bb434fd08fb9",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "Press(behavior=2)",
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -293,11 +302,22 @@
                 {
                     "name": "",
                     "id": "d128ed46-8bb6-4844-8595-63022d2821b2",
-                    "path": "<Keyboard>/#(2)",
+                    "path": "<Keyboard>/2",
                     "interactions": "",
                     "processors": "",
                     "groups": "KeyboardMouse",
                     "action": "Axe",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "58270f8c-053f-4970-b1b9-76954cf68884",
+                    "path": "<Keyboard>/1",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "KeyboardMouse",
+                    "action": "Arm",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

@@ -19,9 +19,14 @@ public class AimController : MonoBehaviour
     [SerializeField] private Transform pfBulletProjectile;
     [SerializeField] private Rig aimRig;
     [SerializeField] private float playerLife;
+    [SerializeField] private MeshRenderer playerGun;
+    [SerializeField] private MeshRenderer playerGunTambor;
+    [SerializeField] private MeshRenderer playerAxe;
 
 
     private Transform a;
+    private bool axeOnHand;
+    private bool armOnHand = true;
 
     private ThirdPersonController thirdPersonController;
     private StarterAssetsInputs starterAssetsInputs;
@@ -45,6 +50,7 @@ public class AimController : MonoBehaviour
         starterAssetsInputs = GetComponent<StarterAssetsInputs>();
         animator = GetComponent<Animator>();
         playerLife = 100;
+        playerAxe.enabled = false;
     }
     private void Update()
     {
@@ -60,65 +66,104 @@ public class AimController : MonoBehaviour
             hitTransform = raycastHit.transform;
             enemyTarget = raycastHit.collider.gameObject.GetComponent<BulletTarget>();
         }
-        // Player is aiming
-        if (starterAssetsInputs.aim){
-            //Configurações de câmera
-            aimVirtualCamera.gameObject.SetActive(true);
-            thirdPersonController.SetSensitivity(aimSensitivity);
-            thirdPersonController.SetRotateOnMove(false);
-            
-            animator.SetLayerWeight(1, Mathf.Lerp(animator.GetLayerWeight(1), 1f, Time.deltaTime * 10f));
-
-            Vector3 worldAimTarget = mouseWorldPosition;
-            worldAimTarget.y = transform.position.y;
-            Vector3 aimDirection = (worldAimTarget - transform.position).normalized;
-            transform.forward = Vector3.Lerp(transform.forward, aimDirection, Time.deltaTime * 20f);
-            
-            aimRig.weight = 0.6f; //Acionando o layer Rig
-            animator.SetLayerWeight(2, 0);
-
-            buttonPressTime += Time.deltaTime;
-
-            if (starterAssetsInputs.shoot && buttonPressTime > delayTime) {                
-                animator.SetLayerWeight(2, 1);
-                animator.SetTrigger("Shooting_T");
-
-                if (hitTransform != null){ // Acertando alguma coisa 
-                    if (hitTransform.GetComponent<BulletTarget>() != null){
-
-                        a = Instantiate(vfxHitGreen, debugTransform.position, Quaternion.identity); // efeitin da bala no zumbi
-                        enemyTarget.bulletHit();
-                    }
-                    else{
-                        a = Instantiate(vfxHitRed, debugTransform.position, Quaternion.identity); // efeitin da bala no resto
-                    }
-                }
-                SourceaudioClip.PlayOneShot(audioClip);
-                if (a != null){
-                    Destroy(a.gameObject, 1f);
-                }
-                //Vector3 aimDir = (mouseWorldPosition - spawnBulletPosition.position).normalized;
-                //Instantiate(pfBulletProjectile, spawnBulletPosition.position, Quaternion.LookRotation(aimDir, Vector3.up));
-                starterAssetsInputs.shoot = false;
-            }
-            else{
-                animator.SetLayerWeight(2, Mathf.Lerp(animator.GetLayerWeight(1), 0f, Time.deltaTime * 20f));
-            }
-            
-        }
-        else{
+        if (starterAssetsInputs.getAxe)
+        {
             aimVirtualCamera.gameObject.SetActive(false);
             thirdPersonController.SetSensitivity(normalSensitivity);
             thirdPersonController.SetRotateOnMove(true);
-            animator.SetLayerWeight(1, Mathf.Lerp(animator.GetLayerWeight(1), 0f, Time.deltaTime * 10f));
+            animator.SetLayerWeight(1, 0);
+
+            animator.SetLayerWeight(2, 0);
+
+            starterAssetsInputs.shoot = false;
 
             aimRig.weight = 0f;
             buttonPressTime = 0;
+
+            armOnHand = false;
+            if(playerGun.enabled)
+                toggleMeshRenderer();
+        }
+        if (starterAssetsInputs.getArm) {
+            armOnHand = true;
+            if (!playerGun.enabled)
+                toggleMeshRenderer();
+        }
+        if (armOnHand)
+        {
+            
+            // Player is aiming
+            if (starterAssetsInputs.aim)
+            {
+                armOnHand = true;
+                // Configurações de câmera
+                aimVirtualCamera.gameObject.SetActive(true);
+                thirdPersonController.SetSensitivity(aimSensitivity);
+                thirdPersonController.SetRotateOnMove(false);
+
+                // Mudando animação do player segurando a arma
+                animator.SetLayerWeight(1, Mathf.Lerp(animator.GetLayerWeight(1), 1f, Time.deltaTime * 10f));
+
+                Vector3 worldAimTarget = mouseWorldPosition;
+                worldAimTarget.y = transform.position.y;
+                Vector3 aimDirection = (worldAimTarget - transform.position).normalized;
+
+                transform.forward = Vector3.Lerp(transform.forward, aimDirection, Time.deltaTime * 20f);
+
+                aimRig.weight = 0.6f; //Acionando o layer Rig
+                animator.SetLayerWeight(2, 0);
+
+                buttonPressTime += Time.deltaTime;
+
+                // Atirando e delay do tiro
+                if (starterAssetsInputs.shoot && buttonPressTime > delayTime)
+                {
+                    animator.SetLayerWeight(2, 1);
+                    animator.SetTrigger("Shooting_T");
+
+                    if (hitTransform != null)
+                    { 
+                        // Acertando alguma coisa 
+                        if (hitTransform.GetComponent<BulletTarget>() != null)
+                        {
+
+                            a = Instantiate(vfxHitGreen, debugTransform.position, Quaternion.identity); // efeitin da bala no zumbi
+                            enemyTarget.bulletHit();
+                        }
+                        else
+                        {
+                            a = Instantiate(vfxHitRed, debugTransform.position, Quaternion.identity); // efeitin da bala no resto
+                        }
+                    }
+                    SourceaudioClip.PlayOneShot(audioClip);
+                    if (a != null)
+                    {
+                        Destroy(a.gameObject, 1f);
+                    }
+                    //Vector3 aimDir = (mouseWorldPosition - spawnBulletPosition.position).normalized;
+                    //Instantiate(pfBulletProjectile, spawnBulletPosition.position, Quaternion.LookRotation(aimDir, Vector3.up));
+                    starterAssetsInputs.shoot = false;
+                }
+                else
+                {
+                    animator.SetLayerWeight(2, Mathf.Lerp(animator.GetLayerWeight(1), 0f, Time.deltaTime * 20f));
+                }
+
+            }
+            else{
+                aimVirtualCamera.gameObject.SetActive(false);
+                thirdPersonController.SetSensitivity(normalSensitivity);
+                thirdPersonController.SetRotateOnMove(true);
+                animator.SetLayerWeight(1, Mathf.Lerp(animator.GetLayerWeight(1), 0f, Time.deltaTime * 10f));
+
+                aimRig.weight = 0f;
+                buttonPressTime = 0;
+            }
         }
 
-        if (starterAssetsInputs.getAxe){
-            animator.SetBool("Axe_B", true);
-        }
+        //if (starterAssetsInputs.getAxe){
+        //    animator.SetBool("Axe_B", true);
+        //}
     }
     public void getHitZombie(float damage)
     {
@@ -137,5 +182,12 @@ public class AimController : MonoBehaviour
     void PauseGame()
     {
         Time.timeScale = 0;
+    }
+
+    void toggleMeshRenderer()
+    {
+        playerGun.enabled = !playerGun.enabled;
+        playerGunTambor.enabled = !playerGunTambor.enabled;
+        playerAxe.enabled = !playerAxe.enabled;
     }
 }
