@@ -22,6 +22,9 @@ public class AimController : MonoBehaviour
     [SerializeField] private MeshRenderer playerGun;
     [SerializeField] private MeshRenderer playerGunTambor;
     [SerializeField] private MeshRenderer playerAxe;
+    private float timer = 0;
+    private float hitRate = 1f;
+    private AxeManager axe;
 
 
     private Transform a;
@@ -51,6 +54,8 @@ public class AimController : MonoBehaviour
         animator = GetComponent<Animator>();
         playerLife = 100;
         playerAxe.enabled = false;
+        axe = GameObject.FindGameObjectWithTag("axe").GetComponent<AxeManager>();
+        axe.disableRigidBodyAxe();
     }
     private void Update()
     {
@@ -66,6 +71,7 @@ public class AimController : MonoBehaviour
             hitTransform = raycastHit.transform;
             enemyTarget = raycastHit.collider.gameObject.GetComponent<BulletTarget>();
         }
+
         if (starterAssetsInputs.getAxe)
         {
             aimVirtualCamera.gameObject.SetActive(false);
@@ -83,7 +89,30 @@ public class AimController : MonoBehaviour
             armOnHand = false;
             if(playerGun.enabled)
                 toggleMeshRenderer();
+            
         }
+        if (!armOnHand)
+        {
+            
+            int layerIndex = animator.GetLayerIndex("AxeHit");
+            if (starterAssetsInputs.shoot)
+            {
+                
+                animator.SetLayerWeight(layerIndex, 0.8f);
+                animator.SetTrigger("axeHit");
+                axe.disableRigidBodyAxe();
+
+                timer += Time.deltaTime;
+                if (timer > hitRate)
+                {
+                    StartCoroutine(axeCounter());
+                    axe.disableRigidBodyAxe();
+                    timer = 0;
+                }
+                
+            }
+        }
+        
         if (starterAssetsInputs.getArm) {
             armOnHand = true;
             if (!playerGun.enabled)
@@ -91,7 +120,8 @@ public class AimController : MonoBehaviour
         }
         if (armOnHand)
         {
-            
+            int layerIndex = animator.GetLayerIndex("AxeHit");
+            animator.SetLayerWeight(layerIndex, 0f);
             // Player is aiming
             if (starterAssetsInputs.aim)
             {
@@ -189,5 +219,10 @@ public class AimController : MonoBehaviour
         playerGun.enabled = !playerGun.enabled;
         playerGunTambor.enabled = !playerGunTambor.enabled;
         playerAxe.enabled = !playerAxe.enabled;
+    }
+
+    IEnumerator axeCounter()
+    {
+        yield return new WaitForSeconds(0);
     }
 }
