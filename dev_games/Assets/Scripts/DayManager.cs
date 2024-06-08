@@ -11,6 +11,17 @@ public class DayManager : MonoBehaviour
     Renderer render;
     public GameObject luz;
     private Light direcional;
+    public GameObject nuvem1;
+    public GameObject nuvem2;
+    public GameObject nuvem3;
+    public GameObject nuvem4;
+    public GameObject lua;
+    private MeshRenderer n1;
+    private MeshRenderer n2;
+    private MeshRenderer n3;
+    private MeshRenderer n4;
+    private MeshRenderer luaa;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -18,6 +29,11 @@ public class DayManager : MonoBehaviour
         render.material.EnableKeyword("_NORMALMAP");
         render.material.EnableKeyword("_METALLICGLOSSMAP");
         direcional = luz.GetComponent<Light>();
+        n1 = nuvem1.GetComponent<MeshRenderer>();
+        n2 = nuvem2.GetComponent<MeshRenderer>();
+        n3 = nuvem3.GetComponent<MeshRenderer>();
+        n4 = nuvem4.GetComponent<MeshRenderer>();
+        luaa = lua.GetComponent<MeshRenderer>();
     }
 
     void Update()
@@ -26,6 +42,13 @@ public class DayManager : MonoBehaviour
         {
             render.material.mainTexture = noite;
             direcional.enabled = false;
+            n1.enabled = false;
+            n2.enabled = false;
+            n3.enabled = false;
+            n4.enabled = false;
+            luaa.enabled = true;
+
+            ligarluz();
         }
     }
 
@@ -42,6 +65,25 @@ public class DayManager : MonoBehaviour
         if (other.CompareTag("Player")) //Confere que o player saiu do local e muda variavel
         {
             playerHere = false;
+        }
+    }
+
+    void ligarluz()
+    {
+        GameObject[] luzes = GameObject.FindGameObjectsWithTag("luz");
+        foreach (GameObject vela in luzes)
+        {
+            Light li = vela.GetComponent<Light>();
+            if (li != null) // Verifica se o objeto tem um componente Light
+            {
+                li.enabled = true;
+            }
+            ParticleSystem ps = vela.GetComponent<ParticleSystem>();
+            if (ps != null)
+            {
+                var emission = ps.emission;
+                emission.enabled = true;
+            }
         }
     }
 }

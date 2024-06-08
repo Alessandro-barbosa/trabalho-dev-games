@@ -54,7 +54,7 @@ public class MaquinaBola : MonoBehaviour
 
             InvokeRepeating("spawnaBola", 0, 1.0f);
         }
-        else if(maquinaON == true)
+        else if (maquinaON == true)
         {
             button.transform.Translate(0, 0, -0.043f);
             maquinaON = false;
