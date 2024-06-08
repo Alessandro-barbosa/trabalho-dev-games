@@ -52,19 +52,33 @@ public class MaquinaBola : MonoBehaviour
             maquinaON = true;
             led.enabled = false;
 
-            GameObject novaBola = Instantiate(bola, bolaLocal.transform.position, bolaLocal.transform.rotation);
-            Rigidbody rb = novaBola.GetComponent<Rigidbody>();
-            if (rb != null)
-            {
-                rb.AddForce(Vector3.up * 20.0f, ForceMode.Impulse);
-                rb.AddForce(Vector3.forward * 5.0f, ForceMode.Impulse);
-            }
+            InvokeRepeating("spawnaBola", 0, 1.0f);
         }
         else if(maquinaON == true)
         {
             button.transform.Translate(0, 0, -0.043f);
             maquinaON = false;
             led.enabled = true;
+
+            CancelInvoke();
         }
+    }
+
+    void spawnaBola()
+    {
+        GameObject novaBola = Instantiate(bola, bolaLocal.transform.position, bolaLocal.transform.rotation);
+        Rigidbody rb = novaBola.GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            rb.AddForce(Vector3.up * 15.0f, ForceMode.Impulse);
+            rb.AddForce(Vector3.forward * 5.0f, ForceMode.Impulse);
+            rb.AddForce(Vector3.left * 5.5f, ForceMode.Impulse);
+            rb.AddTorque(randomTorque(), randomTorque(), randomTorque());
+        }
+    }
+
+    float randomTorque()
+    {
+        return Random.Range(-10, 10);
     }
 }

@@ -29,5 +29,9 @@ public class Projectile : MonoBehaviour
                 Destroy(gameObject);
             }
         }
+        else if (other.CompareTag("bola"))
+        {
+            Destroy(gameObject);
+        }
     }
 }
