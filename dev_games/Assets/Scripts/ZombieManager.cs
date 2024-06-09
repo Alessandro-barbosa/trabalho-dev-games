@@ -7,17 +7,18 @@ using UnityEngine.UI;
 
 public class ZombieManager : MonoBehaviour
 {
-    private GameObject target;
-    private Animator zombieAnim;
-    private AIPath AIpath;
-    private AIDestinationSetter destinationSet;
-    private AimController player;
-    public float damage;
-    private float hitRate = 1f;
-    private float timer = 0;
-    private string movementLayer;
-    public Image healthBar;
+    private GameObject target; // Alvo do zumbi (geralmente o jogador)
+    private Animator zombieAnim; // Componente Animator do zumbi
+    private AIPath AIpath; // Componente AIPath para controle do movimento do zumbi
+    private AIDestinationSetter destinationSet; // Componente para definir o destino do zumbi
+    private AimController player; // Referência ao controlador do jogador
+    public float damage; // Dano causado pelo zumbi
+    private float hitRate = 1f; // Taxa de acerto do zumbi
+    private float timer = 0; // Temporizador para ataques
+    private string movementLayer; // Nome da camada de movimento
+    public Image healthBar; // Barra de vida do zumbi
 
+    // Enumerador para os tipos de zumbis
     public enum Zumbi
     {
         Normal,
@@ -27,29 +28,35 @@ public class ZombieManager : MonoBehaviour
         Boss
     }
 
-    public int maxHealth;
-    private int currentHealth;
+    public int maxHealth; // Vida máxima do zumbi
+    private int currentHealth; // Vida atual do zumbi
 
+    // Awake é chamado quando o script é inicializado
     void Awake()
     {
-        zombieAnim = GetComponent<Animator>();
-        AIpath = GetComponent<AIPath>();
-        destinationSet = GetComponent<AIDestinationSetter>();
-        player = GameObject.FindGameObjectWithTag("Player").GetComponent<AimController>();
+        zombieAnim = GetComponent<Animator>(); // Obtém o componente Animator
+        AIpath = GetComponent<AIPath>(); // Obtém o componente AIPath
+        destinationSet = GetComponent<AIDestinationSetter>(); // Obtém o componente AIDestinationSetter
+        player = GameObject.FindGameObjectWithTag("Player").GetComponent<AimController>(); // Obtém o AimController do jogador
+
+        // Define o alvo do zumbi como o jogador
         if (destinationSet != null && player != null)
         {
             destinationSet.target = player.transform;
         }
     }
 
+    // Inicializa o zumbi com base no tipo
     public void NewStart(Zumbi tipo)
     {
+        // Verifica se o componente AIPath está presente
         if (AIpath == null)
         {
             Debug.LogError("AIPath component is not found on the zombie!");
             return;
         }
 
+        // Define as propriedades do zumbi com base no tipo
         switch (tipo)
         {
             case Zumbi.Normal:
@@ -89,19 +96,22 @@ public class ZombieManager : MonoBehaviour
                 Debug.LogError("ERROR, nao tem esse tipo de zumbi");
                 break;
         }
-        currentHealth = maxHealth;
-        UpdateHealthBar();
+        currentHealth = maxHealth; // Define a vida atual como a vida máxima
+        UpdateHealthBar(); // Atualiza a barra de vida
     }
 
+    // Update é chamado uma vez por frame
     void Update()
     {
+        // Verifica se o zumbi pode se mover
         bool isMoving = AIpath != null && AIpath.canMove;
         if (zombieAnim != null)
         {
-            zombieAnim.SetBool("IsMoving", isMoving);
+            zombieAnim.SetBool("IsMoving", isMoving); // Atualiza a animação de movimento
 
             if (isMoving)
             {
+                // Define a camada de animação de movimento e desativa a camada de combate
                 zombieAnim.SetLayerWeight(zombieAnim.GetLayerIndex(movementLayer), 1);
                 zombieAnim.SetLayerWeight(zombieAnim.GetLayerIndex("Combat Layer"), 0);
             }
@@ -109,6 +119,7 @@ public class ZombieManager : MonoBehaviour
 
         if (target != null)
         {
+            // Verifica a distância do alvo e permite o movimento se estiver longe
             if (Vector3.Distance(target.transform.position, transform.position) > 1.8f)
             {
                 if (AIpath != null)
@@ -118,11 +129,13 @@ public class ZombieManager : MonoBehaviour
                 target = null;
                 if (zombieAnim != null)
                 {
+                    // Define a camada de animação de movimento e desativa a camada de combate
                     zombieAnim.SetLayerWeight(zombieAnim.GetLayerIndex(movementLayer), 1);
                     zombieAnim.SetLayerWeight(zombieAnim.GetLayerIndex("Combat Layer"), 0);
                 }
             }
             timer += Time.deltaTime;
+            // Verifica se o tempo decorrido é maior que a taxa de acerto para causar dano
             if (timer > hitRate)
             {
                 StartCoroutine(ZombieDamage());
@@ -131,51 +144,58 @@ public class ZombieManager : MonoBehaviour
         }
     }
 
+    // Detecta colisões com o jogador
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            target = collision.gameObject;
+            target = collision.gameObject; // Define o alvo como o jogador
             if (AIpath != null)
             {
-                AIpath.canMove = false;
+                AIpath.canMove = false; // Para o movimento do zumbi
             }
             if (zombieAnim != null)
             {
+                // Inicia a animação de ataque
                 zombieAnim.SetTrigger("RightAttackTrigger");
+                // Desativa a camada de movimento e ativa a camada de combate
                 zombieAnim.SetLayerWeight(zombieAnim.GetLayerIndex(movementLayer), 0);
                 zombieAnim.SetLayerWeight(zombieAnim.GetLayerIndex("Combat Layer"), 1);
             }
-            StartCoroutine(ZombieDamage());
+            StartCoroutine(ZombieDamage()); // Inicia a coroutine para causar dano
         }
     }
 
+    // Coroutine para causar dano ao jogador
     IEnumerator ZombieDamage()
     {
         yield return new WaitForSeconds(0);
         if (target != null)
         {
-            player.getHitZombie(damage);
+            player.getHitZombie(damage); // Aplica dano ao jogador
         }
     }
 
+    // Método para o zumbi receber dano
     public void TakeDamage(int damage)
     {
-        currentHealth -= damage;
+        currentHealth -= damage; // Reduz a vida atual do zumbi
         Debug.Log($"{gameObject.name} tomou {damage} de dano. Vida restante: {currentHealth}");
 
         if (currentHealth <= 0)
         {
-            Die();
+            Die(); // Mata o zumbi se a vida for menor ou igual a 0
         }
-        UpdateHealthBar();
+        UpdateHealthBar(); // Atualiza a barra de vida
     }
 
+    // Método para destruir o zumbi
     void Die()
     {
         Destroy(gameObject);
     }
 
+    // Atualiza a barra de vida do zumbi
     void UpdateHealthBar()
     {
         if (healthBar != null)
