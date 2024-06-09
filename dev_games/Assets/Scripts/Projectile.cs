@@ -8,9 +8,11 @@ public class Projectile : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        Debug.Log("Acertou algo");
         if (other.CompareTag("Enemy"))
         {
-            ZombieHealth zombieHealth = other.GetComponent<ZombieHealth>();
+            ZombieManager zombieHealth = other.GetComponent<ZombieManager>();
+            Debug.Log("Acertou o zumbi");
             if (zombieHealth != null)
             {
                 if (gameObject.CompareTag("PistolProjectile"))

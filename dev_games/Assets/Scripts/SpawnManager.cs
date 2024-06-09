@@ -4,37 +4,85 @@ using UnityEngine;
 
 public class SpawnManager : MonoBehaviour
 {
-    public GameObject spawn;
+    public List<GameObject> spawners;
+    public List<GameObject> zombies; // Prefabs dos zumbis
+    private int spawnInterval = 1;
+    private int baseZombiesPerWave = 10; // Número base de zumbis por onda
+    private int waveNumber = 1; // Onda inicial
 
-    private int spawnInterval = 2;
-    private int spawnRange = 20;
-    private int numZombies = 1;
-
-    // Start is called before the first frame update
-    void Start()
+    public void StartWave(int wave)
     {
+        waveNumber = wave;
         StartCoroutine(SpawnZombies());
     }
 
     IEnumerator SpawnZombies()
     {
-        int i = 0;
-        while (true)
+        // Adicionando 5 zumbis por wave:
+        int numZombies = baseZombiesPerWave + (waveNumber - 1) * 5;
+        int spawnedZombies = 0;
+
+        while (spawnedZombies < numZombies)
         {
             yield return new WaitForSeconds(spawnInterval);
-            Spawn();
-            i++;
-            Debug.Log("Passou aqui " + i + " vezes");
+            StartCoroutine(SpawnAndInitializeZombie());
+            spawnedZombies++;
         }
     }
 
-    void Spawn()
+    IEnumerator SpawnAndInitializeZombie()
     {
-        for(int i = 0; i < numZombies; i++)
+        if (spawners.Count == 0 || zombies.Count == 0)
         {
-            Vector3 spawnVector = new Vector3 (transform.position.x + Random.Range(-spawnRange, spawnRange), transform.position.y + Random.Range(-spawnRange, spawnRange), transform.position.z);
-            
-            Instantiate(spawn, transform.position, Quaternion.identity);
+            Debug.LogWarning("Spawners ou Zombies não configurados corretamente.");
+            yield break;
         }
+
+        int localNascer = Random.Range(0, spawners.Count);
+        GameObject zombiePrefab = SelectZombiePrefab();
+
+        Vector3 spawnVector = spawners[localNascer].transform.position;
+        GameObject zombieInstance = Instantiate(zombiePrefab, spawnVector, Quaternion.identity);
+        zombieInstance.SetActive(false);
+
+        yield return new WaitForSeconds(1);
+
+        ZombieManager zombieManager = zombieInstance.GetComponent<ZombieManager>();
+        if (zombieManager != null)
+        {
+            ZombieManager.Zumbi tipoZumbi = SelectZombieType();
+            zombieManager.NewStart(tipoZumbi);
+        }
+
+        zombieInstance.SetActive(true);
+    }
+
+    GameObject SelectZombiePrefab()
+    {
+        // Seleciona aleatoriamente um prefab de zumbi da lista
+        int index = Random.Range(0, zombies.Count);
+        return zombies[index];
+    }
+
+    ZombieManager.Zumbi SelectZombieType()
+    {
+        int chance = Random.Range(0, 100);
+        if (waveNumber > 4 && chance < 2)
+        {
+            return ZombieManager.Zumbi.Boss;
+        }
+        if (waveNumber > 3 && chance < 5)
+        {
+            return ZombieManager.Zumbi.GrandeRapido;
+        }
+        if (waveNumber > 2 && chance < 10)
+        {
+            return ZombieManager.Zumbi.Grande;
+        }
+        if (waveNumber > 1 && chance < 20)
+        {
+            return ZombieManager.Zumbi.Rapido;
+        }
+        return ZombieManager.Zumbi.Normal;
     }
 }

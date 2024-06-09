@@ -22,9 +22,14 @@ public class DayManager : MonoBehaviour
     private MeshRenderer n4;
     private MeshRenderer luaa;
 
-    // Start is called before the first frame update
+    public SpawnManager spawner;
+
+    public int dayCounter;
+    bool isDay = true;
+
     void Start()
     {
+        spawner = GameObject.Find("GameManager").GetComponent<SpawnManager>();
         render = skybox.GetComponent<Renderer>();
         render.material.EnableKeyword("_NORMALMAP");
         render.material.EnableKeyword("_METALLICGLOSSMAP");
@@ -34,27 +39,51 @@ public class DayManager : MonoBehaviour
         n3 = nuvem3.GetComponent<MeshRenderer>();
         n4 = nuvem4.GetComponent<MeshRenderer>();
         luaa = lua.GetComponent<MeshRenderer>();
+        dayCounter = 0;
     }
 
     void Update()
     {
-        if (playerHere && Input.GetKeyDown(KeyCode.E)) //Checa se o player está no local e apertou E
+        if (playerHere && Input.GetKeyDown(KeyCode.E) && isDay)
         {
-            render.material.mainTexture = noite;
-            direcional.enabled = false;
-            n1.enabled = false;
-            n2.enabled = false;
-            n3.enabled = false;
-            n4.enabled = false;
-            luaa.enabled = true;
-
-            ligarluz();
+            SetNoite();
+            dayCounter++;
+            spawner.StartWave(dayCounter);
+            isDay = false;
+            StartCoroutine(CheckForZombies());
         }
+    }
+
+    void SetDia()
+    {
+        render.material.mainTexture = dia;
+        direcional.enabled = true;
+        SetNuvens(true);
+        luaa.enabled = false;
+        ApagarLuz();
+        isDay = true;
+    }
+
+    void SetNoite()
+    {
+        render.material.mainTexture = noite;
+        direcional.enabled = false;
+        SetNuvens(false);
+        luaa.enabled = true;
+        ligarluz();
+    }
+
+    void SetNuvens(bool estado)
+    {
+        n1.enabled = estado;
+        n2.enabled = estado;
+        n3.enabled = estado;
+        n4.enabled = estado;
     }
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player")) //Confere que o player está no local e muda variavel
+        if (other.CompareTag("Player"))
         {
             playerHere = true;
         }
@@ -62,7 +91,7 @@ public class DayManager : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("Player")) //Confere que o player saiu do local e muda variavel
+        if (other.CompareTag("Player"))
         {
             playerHere = false;
         }
@@ -74,7 +103,7 @@ public class DayManager : MonoBehaviour
         foreach (GameObject vela in luzes)
         {
             Light li = vela.GetComponent<Light>();
-            if (li != null) // Verifica se o objeto tem um componente Light
+            if (li != null)
             {
                 li.enabled = true;
             }
@@ -83,6 +112,37 @@ public class DayManager : MonoBehaviour
             {
                 var emission = ps.emission;
                 emission.enabled = true;
+            }
+        }
+    }
+
+    void ApagarLuz()
+    {
+        GameObject[] luzes = GameObject.FindGameObjectsWithTag("luz");
+        foreach (GameObject vela in luzes)
+        {
+            Light li = vela.GetComponent<Light>();
+            if (li != null)
+            {
+                li.enabled = false;
+            }
+            ParticleSystem ps = vela.GetComponent<ParticleSystem>();
+            if (ps != null)
+            {
+                var emission = ps.emission;
+                emission.enabled = false;
+            }
+        }
+    }
+
+    IEnumerator CheckForZombies()
+    {
+        while (!isDay)
+        {
+            yield return new WaitForSeconds(5f);
+            if (GameObject.FindGameObjectsWithTag("Enemy").Length == 0)
+            {
+                SetDia();
             }
         }
     }

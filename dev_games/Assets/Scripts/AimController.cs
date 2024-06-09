@@ -37,16 +37,19 @@ public class AimController : MonoBehaviour
 
     private Transform objetoAtingido;
     private GameObject enemyObject;
-    private BulletTarget enemyTarget;
+    private ZombieManager enemyTarget;
 
     public float ClipLenght = 1f;
     public AudioClip audioClip;
     public AudioSource SourceaudioClip;
     public HealthManager healthManager;
 
+    GameObject bola;
 
     private float buttonPressTime = 0;
     private float delayTime = 0.3f;
+
+    int danoArma = 10;
     private void Start()
     {
         thirdPersonController = GetComponent<ThirdPersonController>();
@@ -69,7 +72,8 @@ public class AimController : MonoBehaviour
             debugTransform.position = raycastHit.point;
             mouseWorldPosition = raycastHit.point;
             hitTransform = raycastHit.transform;
-            enemyTarget = raycastHit.collider.gameObject.GetComponent<BulletTarget>();
+            enemyTarget = raycastHit.collider.gameObject.GetComponent<ZombieManager>();
+            bola = raycastHit.collider.gameObject;
         }
 
         if (starterAssetsInputs.getAxe)
@@ -154,15 +158,17 @@ public class AimController : MonoBehaviour
                     if (hitTransform != null)
                     { 
                         // Acertando alguma coisa 
-                        if (hitTransform.GetComponent<BulletTarget>() != null)
+                        if (hitTransform.GetComponent<ZombieManager>() != null)
                         {
 
                             a = Instantiate(vfxHitGreen, debugTransform.position, Quaternion.identity); // efeitin da bala no zumbi
-                            enemyTarget.bulletHit();
+                            enemyTarget.TakeDamage(danoArma);
                         }
                         else
                         {
                             a = Instantiate(vfxHitRed, debugTransform.position, Quaternion.identity); // efeitin da bala no resto
+                            if (hitTransform.GetComponent<bolaBehaviour>() != null)
+                            {  Destroy(bola); }
                         }
                     }
                     SourceaudioClip.PlayOneShot(audioClip);

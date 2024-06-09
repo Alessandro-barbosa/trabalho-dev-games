@@ -1,7 +1,7 @@
 using Pathfinding;
-using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -30,19 +30,26 @@ public class ZombieManager : MonoBehaviour
     public int maxHealth;
     private int currentHealth;
 
-    void Start()
+    void Awake()
     {
         zombieAnim = GetComponent<Animator>();
         AIpath = GetComponent<AIPath>();
         destinationSet = GetComponent<AIDestinationSetter>();
-        destinationSet.target = GameObject.FindGameObjectWithTag("Player").transform;
         player = GameObject.FindGameObjectWithTag("Player").GetComponent<AimController>();
-
-        NewStart(Zumbi.Boss);
+        if (destinationSet != null && player != null)
+        {
+            destinationSet.target = player.transform;
+        }
     }
 
     public void NewStart(Zumbi tipo)
     {
+        if (AIpath == null)
+        {
+            Debug.LogError("AIPath component is not found on the zombie!");
+            return;
+        }
+
         switch (tipo)
         {
             case Zumbi.Normal:
@@ -88,23 +95,32 @@ public class ZombieManager : MonoBehaviour
 
     void Update()
     {
-        bool isMoving = AIpath.canMove;
-        zombieAnim.SetBool("IsMoving", isMoving);
-
-        if (isMoving)
+        bool isMoving = AIpath != null && AIpath.canMove;
+        if (zombieAnim != null)
         {
-            zombieAnim.SetLayerWeight(zombieAnim.GetLayerIndex(movementLayer), 1);
-            zombieAnim.SetLayerWeight(zombieAnim.GetLayerIndex("Combat Layer"), 0);
+            zombieAnim.SetBool("IsMoving", isMoving);
+
+            if (isMoving)
+            {
+                zombieAnim.SetLayerWeight(zombieAnim.GetLayerIndex(movementLayer), 1);
+                zombieAnim.SetLayerWeight(zombieAnim.GetLayerIndex("Combat Layer"), 0);
+            }
         }
 
         if (target != null)
         {
             if (Vector3.Distance(target.transform.position, transform.position) > 1.8f)
             {
-                AIpath.canMove = true;
+                if (AIpath != null)
+                {
+                    AIpath.canMove = true;
+                }
                 target = null;
-                zombieAnim.SetLayerWeight(zombieAnim.GetLayerIndex(movementLayer), 1);
-                zombieAnim.SetLayerWeight(zombieAnim.GetLayerIndex("Combat Layer"), 0);
+                if (zombieAnim != null)
+                {
+                    zombieAnim.SetLayerWeight(zombieAnim.GetLayerIndex(movementLayer), 1);
+                    zombieAnim.SetLayerWeight(zombieAnim.GetLayerIndex("Combat Layer"), 0);
+                }
             }
             timer += Time.deltaTime;
             if (timer > hitRate)
@@ -120,10 +136,16 @@ public class ZombieManager : MonoBehaviour
         if (collision.gameObject.CompareTag("Player"))
         {
             target = collision.gameObject;
-            AIpath.canMove = false;
-            zombieAnim.SetTrigger("RightAttackTrigger");
-            zombieAnim.SetLayerWeight(zombieAnim.GetLayerIndex(movementLayer), 0);
-            zombieAnim.SetLayerWeight(zombieAnim.GetLayerIndex("Combat Layer"), 1);
+            if (AIpath != null)
+            {
+                AIpath.canMove = false;
+            }
+            if (zombieAnim != null)
+            {
+                zombieAnim.SetTrigger("RightAttackTrigger");
+                zombieAnim.SetLayerWeight(zombieAnim.GetLayerIndex(movementLayer), 0);
+                zombieAnim.SetLayerWeight(zombieAnim.GetLayerIndex("Combat Layer"), 1);
+            }
             StartCoroutine(ZombieDamage());
         }
     }
@@ -133,13 +155,15 @@ public class ZombieManager : MonoBehaviour
         yield return new WaitForSeconds(0);
         if (target != null)
         {
-            // player.getHitZombie(damage);
+            player.getHitZombie(damage);
         }
     }
 
     public void TakeDamage(int damage)
     {
         currentHealth -= damage;
+        Debug.Log($"{gameObject.name} tomou {damage} de dano. Vida restante: {currentHealth}");
+
         if (currentHealth <= 0)
         {
             Die();
