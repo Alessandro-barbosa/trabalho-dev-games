@@ -47,7 +47,7 @@ public class AimController : MonoBehaviour
 
     private float buttonPressTime = 0;
     private float delayTime = 0.3f;
-    private void Awake()
+    private void Start()
     {
         thirdPersonController = GetComponent<ThirdPersonController>();
         starterAssetsInputs = GetComponent<StarterAssetsInputs>();
