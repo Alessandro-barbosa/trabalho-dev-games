@@ -32,7 +32,7 @@ public class ZombieAttack : MonoBehaviour
 
         zombieAnim.SetBool("IsMoving", AIpath.canMove);
         //Debug.Log(AIpath.canMove);
-        if (target != null) //Se o target não está vazio faz
+        if (target != null) //Se o target não estEvazio faz
         {
             if(Vector3.Distance(target.transform.position, transform.position) > 1.8)
             {

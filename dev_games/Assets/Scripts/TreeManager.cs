@@ -8,12 +8,14 @@ public class TreeManager : MonoBehaviour
     private int treeLife = 10;
     private GameObject treeGameObject;
     MeshRenderer meshTree = null;
+    private GameObject toco;
 
     // Start is called before the first frame update
     void Start()
     {
         treeGameObject = gameObject;
         meshTree = treeGameObject.GetComponent<MeshRenderer>();
+        toco = GameObject.FindGameObjectWithTag("toco");
     }
 
     // Update is called once per frame
@@ -39,7 +41,10 @@ public class TreeManager : MonoBehaviour
         }
         else
         {
+            Vector3 position = transform.position;
+            Quaternion rotation = transform.rotation;
             meshTree.enabled = false;
+            Instantiate(toco, position, rotation);
         }
     }
 }

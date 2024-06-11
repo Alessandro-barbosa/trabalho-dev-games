@@ -15,6 +15,7 @@ TagManager:
   - axe
   - bola
   - luz
+  - toco
   layers:
   - Default
   - TransparentFX
