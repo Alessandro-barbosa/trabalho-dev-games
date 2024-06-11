@@ -40,6 +40,11 @@ public class GrowthHorta : MonoBehaviour
                 TentarCrescer();
             }
         }
+        // Verifica se a tecla 'E' foi pressionada.
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            VerificarRaycast();
+        }
     }
 
     // Tenta fazer a planta crescer com base em uma chance aleatória
@@ -102,20 +107,36 @@ public class GrowthHorta : MonoBehaviour
         transform.position = new Vector3(transform.position.x, transform.position.y + incrementoAltura, transform.position.z);
     }
 
-    // Método chamado quando o jogador clica na planta
-    private void OnMouseDown()
-    {
-        if (estagioDeCrescimento == (int)Estagio.Final)
-        {
-            HortaReset();
-            player.EatFood(10);
-        }
-    }
+    //// Método chamado quando o jogador clica na planta
+    //private void OnMouseDown()
+    //{
+    //    if (estagioDeCrescimento == (int)Estagio.Final)
+    //    {
+    //        HortaReset();
+    //        player.EatFood(10);
+    //    }
+    //}
 
     // Reseta a planta para o estado inicial
     public void HortaReset()
     {
         estagioDeCrescimento = 0;
         transform.position = new Vector3(transform.position.x, transform.position.y - 20 * TAMANHO_CRESCIMENTO, transform.position.z);
+    }
+    //Verifica seo jogador está olhando para a planta
+    private void VerificarRaycast()
+    {
+        RaycastHit hit;
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+        if (Physics.Raycast(ray, out hit, 10))
+        {
+            if (hit.transform == this.transform && estagioDeCrescimento == (int)Estagio.Final)
+            {
+                HortaReset();
+                player.EatFood(10);
+                Debug.Log("comida comida");
+            }
+        }
     }
 }

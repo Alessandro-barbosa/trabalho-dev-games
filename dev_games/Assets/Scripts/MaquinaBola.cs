@@ -8,8 +8,10 @@ public class MaquinaBola : MonoBehaviour
     public GameObject luz;
     public GameObject bola;
     public GameObject bolaLocal;
+    public GameObject bolaNova;
+    private MeshRenderer meshBolaNova;
     private MeshRenderer led;
-
+    
 
     private bool playerHere = false;
     private bool maquinaON = false;
@@ -18,6 +20,7 @@ public class MaquinaBola : MonoBehaviour
     void Start()
     {
         led = luz.GetComponent<MeshRenderer>();
+        meshBolaNova = bolaNova.GetComponent<MeshRenderer>();
     }
 
     void Update()
@@ -53,6 +56,7 @@ public class MaquinaBola : MonoBehaviour
             led.enabled = false;
 
             InvokeRepeating("spawnaBola", 0, 1.0f);
+            meshBolaNovaChanger();
         }
         else if (maquinaON == true)
         {
@@ -60,6 +64,7 @@ public class MaquinaBola : MonoBehaviour
             maquinaON = false;
             led.enabled = true;
 
+            meshBolaNovaChanger();
             CancelInvoke();
         }
     }
@@ -76,7 +81,10 @@ public class MaquinaBola : MonoBehaviour
             rb.AddTorque(randomTorque(), randomTorque(), randomTorque());
         }
     }
-
+    void meshBolaNovaChanger()
+    {
+        meshBolaNova.enabled = !meshBolaNova.enabled;
+    }
     float randomTorque()
     {
         return Random.Range(-10, 10);
