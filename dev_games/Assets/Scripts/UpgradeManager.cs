@@ -9,6 +9,7 @@ public class UpgradeManager : MonoBehaviour
     public GameObject upgrade1;
     public GameObject upgrade2;
     public GameObject upgrade3;
+    public int recursos;
 
     void Start()
     {
@@ -21,6 +22,8 @@ public class UpgradeManager : MonoBehaviour
         {
             trocarObjetos();
         }
+        GameObject[] tocos = GameObject.FindGameObjectsWithTag("toco");
+        recursos = tocos.Length - 1;
     }
 
     void OnTriggerEnter(Collider other)
@@ -53,15 +56,24 @@ public class UpgradeManager : MonoBehaviour
             switch (nomeCerca) //Checa o nivel de upgrade
             {
                 case "cerca0":
-                    newObject = upgrade1;
+                    if(recursos >= 2)
+                    {
+                        newObject = upgrade1;
+                    }
                     break;
 
                 case "cerca1":
-                    newObject = upgrade2;
+                    if(recursos >= 5)
+                    {
+                        newObject = upgrade2;
+                    }
                     break;
 
                 case "cerca2":
-                    newObject = upgrade3;
+                    if(recursos >= 10)
+                    {
+                        newObject = upgrade3;
+                    }
                     break;
 
                 case "cerca3":
