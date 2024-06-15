@@ -37,6 +37,8 @@ public class AimController : MonoBehaviour
     private bool isWeaponOnHand = true; // Estado da arma
     private float buttonPressTime = 0f; // Temporizador para pressionar o botão
     private float delayTime = 0.3f; // Tempo de atraso para o botão
+    private float delayTimeAxe = 2f;
+    private float btnAxePressTime = 0f;
 
     private GameObject bola; // Referência ao objeto alvo
     private ZombieManager enemyTarget; // Referência ao script ZombieManager do inimigo
@@ -178,21 +180,18 @@ public class AimController : MonoBehaviour
     private void HandleAxe()
     {
         // Se o jogador estiver atacando com o machado
-        if (!isWeaponOnHand && starterAssetsInputs.shoot)
+        if (!isWeaponOnHand && starterAssetsInputs.shoot && btnAxePressTime >= delayTimeAxe)
         {
             int layerIndex = animator.GetLayerIndex("AxeHit");
             animator.SetLayerWeight(layerIndex, 0.8f); // Ajusta o peso da camada de animação de ataque com machado
             animator.SetTrigger("axeHit"); // Dispara a animação de ataque com machado
+            axe.disableRigidBodyAxe();
+            btnAxePressTime = 0;
+            StartCoroutine(AxeHitDelay());
 
-            
-            timer += Time.deltaTime;
-            if (timer > hitRate)
-            {
-                StartCoroutine(AxeHitDelay());
-                axe?.disableRigidBodyAxe(); // Desabilita a física do machado
-                timer = 0f;
-            }
         }
+        else
+            btnAxePressTime += Time.deltaTime;
     }
 
     public void getHitZombie(float damage)
@@ -222,9 +221,10 @@ public class AimController : MonoBehaviour
         playerGunTambor.enabled = !playerGunTambor.enabled; // Alterna a visibilidade do tambor da arma
         playerAxe.enabled = !playerAxe.enabled; // Alterna a visibilidade do machado
     }
-
+  
     private IEnumerator AxeHitDelay()
     {
-        yield return new WaitForSeconds(0); // Delay para o ataque com machado (placeholder)
+        yield return new WaitForSeconds(2); // Delay para o ataque com machado (placeholder)
+        axe.disableRigidBodyAxe();
     }
 }

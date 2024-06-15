@@ -9,6 +9,8 @@ public class TreeManager : MonoBehaviour
     private GameObject treeGameObject;
     MeshRenderer meshTree = null;
     private GameObject toco;
+    private float timer = 0;
+    private float treeHitTime = 2f;
 
     // Start is called before the first frame update
     void Start()
@@ -21,6 +23,10 @@ public class TreeManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (timer > 0)
+        {
+            timer -= Time.deltaTime;
+        }
     }
 
     
@@ -28,14 +34,19 @@ public class TreeManager : MonoBehaviour
     {
         if (collision.gameObject.tag == "axe")
         {
-            Debug.Log($"bateu na árvore vida restante: {treeLife}");
-            hitTree();
+            // Se o timer estiver zerado, permite registrar o hit
+            if (timer <= 0)
+            {
+                Debug.Log($"bateu na árvore, vida restante: {treeLife}");
+                hitTree();
+                timer = treeHitTime; // Reinicia o timer
+            }
         }
     }
 
     public void hitTree()
     {
-        if(treeLife >= 0)
+        if(treeLife > 0)
         {
             treeLife -= 5;
         }
