@@ -184,6 +184,7 @@ public class AimController : MonoBehaviour
             animator.SetLayerWeight(layerIndex, 0.8f); // Ajusta o peso da camada de animação de ataque com machado
             animator.SetTrigger("axeHit"); // Dispara a animação de ataque com machado
 
+            
             timer += Time.deltaTime;
             if (timer > hitRate)
             {

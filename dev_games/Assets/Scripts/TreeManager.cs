@@ -28,7 +28,7 @@ public class TreeManager : MonoBehaviour
     {
         if (collision.gameObject.tag == "axe")
         {
-            Debug.Log("BATEU NA ARVORE");
+            Debug.Log($"bateu na árvore vida restante: {treeLife}");
             hitTree();
         }
     }
