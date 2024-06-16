@@ -11,6 +11,7 @@ public class TreeManager : MonoBehaviour
     private GameObject toco;
     private float timer = 0;
     private float treeHitTime = 2f;
+    private WoodCanva woodLogCounter;
 
     // Start is called before the first frame update
     void Start()
@@ -18,6 +19,7 @@ public class TreeManager : MonoBehaviour
         treeGameObject = gameObject;
         meshTree = treeGameObject.GetComponent<MeshRenderer>();
         toco = GameObject.FindGameObjectWithTag("toco");
+        woodLogCounter = FindObjectOfType<WoodCanva>();
     }
 
     // Update is called once per frame
@@ -52,6 +54,7 @@ public class TreeManager : MonoBehaviour
         }
         else
         {
+            woodLogCounter.AddLogWood(2);
             Vector3 position = transform.position;
             Quaternion rotation = transform.rotation;
             meshTree.enabled = false;
