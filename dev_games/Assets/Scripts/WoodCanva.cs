@@ -6,7 +6,7 @@ using TMPro;
 public class WoodCanva : MonoBehaviour
 {
     private TMP_Text woodCounterText;
-    private int woodCount = 0;
+    public int woodCount = 0;
 
     private void Start()
     {
@@ -15,6 +15,11 @@ public class WoodCanva : MonoBehaviour
     public void AddLogWood(int value)
     {
         woodCount += value;
+        UpdateWoodLogCounter();
+    }
+    public void minusLogWood(int value)
+    {
+        woodCount -= value;
         UpdateWoodLogCounter();
     }
     private void UpdateWoodLogCounter()

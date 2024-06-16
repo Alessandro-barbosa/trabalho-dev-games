@@ -10,10 +10,12 @@ public class UpgradeManager : MonoBehaviour
     public GameObject upgrade2;
     public GameObject upgrade3;
     public int recursos;
+    private WoodCanva woodCanva;
+    private int counterNow = 0;
 
     void Start()
     {
-
+        woodCanva = FindObjectOfType<WoodCanva>();
     }
 
     void Update()
@@ -56,23 +58,26 @@ public class UpgradeManager : MonoBehaviour
             switch (nomeCerca) //Checa o nivel de upgrade
             {
                 case "cerca0":
-                    if(recursos >= 2)
+                    if (woodCanva.woodCount >= 2)
                     {
                         newObject = upgrade1;
+                        counterNow = 2;
                     }
                     break;
 
                 case "cerca1":
-                    if(recursos >= 5)
+                    if (woodCanva.woodCount >= 5)
                     {
                         newObject = upgrade2;
+                        counterNow = 5;
                     }
                     break;
 
                 case "cerca2":
-                    if(recursos >= 10)
+                    if (woodCanva.woodCount >= 10)
                     {
                         newObject = upgrade3;
+                        counterNow = 10;
                     }
                     break;
 
@@ -87,7 +92,24 @@ public class UpgradeManager : MonoBehaviour
                 GameObject newCerca = Instantiate(newObject, position, rotation);
                 newCerca.name = GetNextCercaName(nomeCerca);
             }
+        }
 
+        switch (counterNow) {
+            case (2):
+                {
+                    woodCanva.minusLogWood(2);
+                    break;
+                }
+            case (5):
+                {
+                    woodCanva.minusLogWood(5);
+                    break;
+                }
+            case (10):
+                {
+                    woodCanva.minusLogWood(10);
+                    break;
+                }
         }
     }
 

@@ -12,6 +12,9 @@ public class TreeManager : MonoBehaviour
     private float timer = 0;
     private float treeHitTime = 2f;
     private WoodCanva woodLogCounter;
+    private bool canDestroy = true;
+    private float respawnTimer = 0;
+    private MeshRenderer tocoMesh;
 
     // Start is called before the first frame update
     void Start()
@@ -29,19 +32,22 @@ public class TreeManager : MonoBehaviour
         {
             timer -= Time.deltaTime;
         }
+        if (!canDestroy)
+            respawnTimer += Time.deltaTime;
+        respawnTree();
     }
 
     
     void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.tag == "axe")
+        if (collision.gameObject.tag == "axe" && canDestroy)
         {
             // Se o timer estiver zerado, permite registrar o hit
             if (timer <= 0)
             {
-                Debug.Log($"bateu na árvore, vida restante: {treeLife}");
                 hitTree();
                 timer = treeHitTime; // Reinicia o timer
+                Debug.Log($"bateu na árvore, vida restante: {treeLife}");
             }
         }
     }
@@ -54,11 +60,31 @@ public class TreeManager : MonoBehaviour
         }
         else
         {
-            woodLogCounter.AddLogWood(2);
+            woodLogCounter.AddLogWood(1);
             Vector3 position = transform.position;
             Quaternion rotation = transform.rotation;
             meshTree.enabled = false;
+            canDestroy = false;
             Instantiate(toco, position, rotation);
+        }
+    }
+
+    public void respawnTree()
+    {
+        if(respawnTimer >= 5)
+        {
+            //filhosdeToco();
+            meshTree.enabled = true;
+            canDestroy = true;
+            respawnTimer = 0;
+            treeLife = 10;
+        }
+    }
+    private void filhosdeToco()
+    {
+        foreach(var filhos in toco.GetComponentsInChildren<MeshRenderer>())
+        {
+            filhos.enabled = false;
         }
     }
 }
