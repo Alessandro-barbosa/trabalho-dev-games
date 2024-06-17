@@ -8,7 +8,7 @@ public class GrowthHorta : MonoBehaviour
 
     private  float TEMPO_CHANCE = 60f; // Intervalo de tempo para verificar crescimento
     private const float TAMANHO_CRESCIMENTO = 0.05f; // Incremento de tamanho ao crescer
-    private const int CHANCE_CRESCER = 10; // Chance percentual de crescimento
+    private int CHANCE_CRESCER = 10; // Chance percentual de crescimento
     private HortaManager pai;
 
     public float tempoCrescimento;

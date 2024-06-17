@@ -6,12 +6,14 @@ public class HortaManager : MonoBehaviour
 {
     public float tempoHorta;
     public float contadorBuff = 0;
+    private int chanceHorta;
 
     private bool buffado = false;
     // Start is called before the first frame update
     void Start()
     {
         tempoHorta = 60f;
+        chanceHorta = 5;
     }
 
 
@@ -33,5 +35,15 @@ public class HortaManager : MonoBehaviour
             buffado = false;
             tempoHorta = 60f;
         }
+    }
+
+    public void RegarHorta()
+    {
+        chanceHorta = 20;
+    }
+
+    public void SecarAgua()
+    {
+        chanceHorta = 5;
     }
 }

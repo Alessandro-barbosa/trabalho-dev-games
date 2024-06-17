@@ -71,6 +71,7 @@ public class ZombieManager : MonoBehaviour
             case Zumbi.Rapido:
                 movementLayer = "Running Layer";
                 AIpath.maxSpeed = 4;
+                transform.localScale *= 0.8f;
                 damage = 8f;
                 maxHealth = 80;
                 break;

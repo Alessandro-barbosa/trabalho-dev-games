@@ -25,7 +25,7 @@ public class AimController : MonoBehaviour
     [SerializeField] private HealthManager healthManager; // Script para gerenciar a sa�de do jogador
     [SerializeField] private AudioClip audioClip; // Som de tiro
     [SerializeField] private AudioSource SourceaudioClip; // Fonte de �udio para tocar o som de tiro
-    [SerializeField] private int weaponDamage = 10; // Dano da arma
+    [SerializeField] private int weaponDamage = 20; // Dano da arma
 
     private ThirdPersonController thirdPersonController; // Controlador do personagem em terceira pessoa
     private StarterAssetsInputs starterAssetsInputs; // Script para gerenciar entradas do jogador

@@ -28,6 +28,8 @@ public class DayManager : MonoBehaviour
     private float counter = 0;
     private CanvaTextDanger canvaTextDanger;
     private bool timerTextNight = false;
+    private HortaManager horta;
+
 
     public SpawnManager spawner; // Referência ao script SpawnManager
 
@@ -38,6 +40,7 @@ public class DayManager : MonoBehaviour
     void Start()
     {
         // Inicializa referências aos componentes e define estados iniciais
+        horta = GameObject.FindGameObjectWithTag("Horta").GetComponent<HortaManager>();
         spawner = GameObject.Find("GameManager").GetComponent<SpawnManager>();
         render = skybox.GetComponent<Renderer>();
         render.material.EnableKeyword("_NORMALMAP");
@@ -85,6 +88,7 @@ public class DayManager : MonoBehaviour
     {
         if (isDay)
         {
+            horta.SecarAgua();
             isDay = false; // Define isDay para falso
             SetNoite(); // Muda para noite
             dayCounter++; // Incrementa o contador de dias
