@@ -16,6 +16,7 @@ public class ZombieManager : MonoBehaviour
     private string movementLayer; // Nome da camada de movimento
     public Image healthBar; // Barra de vida do zumbi
     private bool hasAttacked = false;
+    private float timer = 0;
 
 
     // Enumerador para os tipos de zumbis
@@ -122,6 +123,11 @@ public class ZombieManager : MonoBehaviour
                 StartCoroutine(ZombieDamage());
                 hasAttacked = true;
             }
+        }
+        timer += Time.deltaTime;
+        if (timer > 1)
+        {
+            AstarPath.active.UpdateGraphs(this.GetComponent<Collider>().bounds);
         }
     }
 

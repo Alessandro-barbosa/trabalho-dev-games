@@ -74,7 +74,6 @@ public class DayManager : MonoBehaviour
             timerText += Time.deltaTime;
             if(timerText >= 5)
             {
-                
                 canvaTextDanger.textDangerTimer();
                 timerTextNight = false;
                 timerText = 0;
