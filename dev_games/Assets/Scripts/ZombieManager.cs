@@ -11,12 +11,12 @@ public class ZombieManager : MonoBehaviour
     private Animator zombieAnim; // Componente Animator do zumbi
     private AIPath AIpath; // Componente AIPath para controle do movimento do zumbi
     private AIDestinationSetter destinationSet; // Componente para definir o destino do zumbi
-    private AimController player; // Referência ao controlador do jogador
+    private AimController player; // Referï¿½ncia ao controlador do jogador
     public float damage; // Dano causado pelo zumbi
-    private float hitRate = 1f; // Taxa de acerto do zumbi
-    private float timer = 0; // Temporizador para ataques
     private string movementLayer; // Nome da camada de movimento
     public Image healthBar; // Barra de vida do zumbi
+    private bool hasAttacked = false;
+
 
     // Enumerador para os tipos de zumbis
     public enum Zumbi
@@ -28,16 +28,16 @@ public class ZombieManager : MonoBehaviour
         Boss
     }
 
-    public int maxHealth; // Vida máxima do zumbi
+    public int maxHealth; // Vida mï¿½xima do zumbi
     private int currentHealth; // Vida atual do zumbi
 
-    // Awake é chamado quando o script é inicializado
+    // Awake ï¿½ chamado quando o script ï¿½ inicializado
     void Awake()
     {
-        zombieAnim = GetComponent<Animator>(); // Obtém o componente Animator
-        AIpath = GetComponent<AIPath>(); // Obtém o componente AIPath
-        destinationSet = GetComponent<AIDestinationSetter>(); // Obtém o componente AIDestinationSetter
-        player = GameObject.FindGameObjectWithTag("Player").GetComponent<AimController>(); // Obtém o AimController do jogador
+        zombieAnim = GetComponent<Animator>(); // Obtï¿½m o componente Animator
+        AIpath = GetComponent<AIPath>(); // Obtï¿½m o componente AIPath
+        destinationSet = GetComponent<AIDestinationSetter>(); // Obtï¿½m o componente AIDestinationSetter
+        player = GameObject.FindGameObjectWithTag("Player").GetComponent<AimController>(); // Obtï¿½m o AimController do jogador
 
         // Define o alvo do zumbi como o jogador
         if (destinationSet != null && player != null)
@@ -49,7 +49,7 @@ public class ZombieManager : MonoBehaviour
     // Inicializa o zumbi com base no tipo
     public void NewStart(Zumbi tipo)
     {
-        // Verifica se o componente AIPath está presente
+        // Verifica se o componente AIPath estï¿½ presente
         if (AIpath == null)
         {
             Debug.LogError("AIPath component is not found on the zombie!");
@@ -62,7 +62,7 @@ public class ZombieManager : MonoBehaviour
             case Zumbi.Normal:
                 movementLayer = "Walking Layer";
                 AIpath.maxSpeed = 2;
-                damage = 10f;
+                damage = 7f;
                 maxHealth = 100;
                 break;
             case Zumbi.Rapido:
@@ -96,87 +96,107 @@ public class ZombieManager : MonoBehaviour
                 Debug.LogError("ERROR, nao tem esse tipo de zumbi");
                 break;
         }
-        currentHealth = maxHealth; // Define a vida atual como a vida máxima
+        currentHealth = maxHealth; // Define a vida atual como a vida mï¿½xima
         UpdateHealthBar(); // Atualiza a barra de vida
     }
 
-    // Update é chamado uma vez por frame
+    // Update ï¿½ chamado uma vez por frame
     void Update()
     {
-        // Verifica se o zumbi pode se mover
-        bool isMoving = AIpath != null && AIpath.canMove;
         if (zombieAnim != null)
         {
-            zombieAnim.SetBool("IsMoving", isMoving); // Atualiza a animação de movimento
-
-            if (isMoving)
-            {
-                // Define a camada de animação de movimento e desativa a camada de combate
-                zombieAnim.SetLayerWeight(zombieAnim.GetLayerIndex(movementLayer), 1);
-                zombieAnim.SetLayerWeight(zombieAnim.GetLayerIndex("Combat Layer"), 0);
-            }
+            bool isMoving = AIpath != null && AIpath.canMove;
+            zombieAnim.SetBool("IsMoving", isMoving);
+            UpdateAnimationLayers(isMoving);
         }
 
         if (target != null)
         {
-            // Verifica a distância do alvo e permite o movimento se estiver longe
-            if (Vector3.Distance(target.transform.position, transform.position) > 1.8f)
+            float distanceToTarget = Vector3.Distance(target.transform.position, transform.position);
+            if (distanceToTarget > 1.8f)
             {
-                if (AIpath != null)
-                {
-                    AIpath.canMove = true;
-                }
-                target = null;
-                if (zombieAnim != null)
-                {
-                    // Define a camada de animação de movimento e desativa a camada de combate
-                    zombieAnim.SetLayerWeight(zombieAnim.GetLayerIndex(movementLayer), 1);
-                    zombieAnim.SetLayerWeight(zombieAnim.GetLayerIndex("Combat Layer"), 0);
-                }
+                ResetTargetAndMovement();
             }
-            timer += Time.deltaTime;
-            // Verifica se o tempo decorrido é maior que a taxa de acerto para causar dano
-            if (timer > hitRate)
+            else if (!hasAttacked)
             {
                 StartCoroutine(ZombieDamage());
-                timer = 0;
+                hasAttacked = true;
             }
         }
     }
 
-    // Detecta colisões com o jogador
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            target = collision.gameObject; // Define o alvo como o jogador
-            if (AIpath != null)
-            {
-                AIpath.canMove = false; // Para o movimento do zumbi
-            }
-            if (zombieAnim != null)
-            {
-                // Inicia a animação de ataque
-                zombieAnim.SetTrigger("RightAttackTrigger");
-                // Desativa a camada de movimento e ativa a camada de combate
-                zombieAnim.SetLayerWeight(zombieAnim.GetLayerIndex(movementLayer), 0);
-                zombieAnim.SetLayerWeight(zombieAnim.GetLayerIndex("Combat Layer"), 1);
-            }
-            StartCoroutine(ZombieDamage()); // Inicia a coroutine para causar dano
+            Debug.Log("Colidiu com player");
+            target = collision.gameObject;
+            if (AIpath != null) AIpath.canMove = false;
+            TriggerAttackAnimation();
         }
     }
 
-    // Coroutine para causar dano ao jogador
     IEnumerator ZombieDamage()
     {
-        yield return new WaitForSeconds(0);
-        if (target != null)
+        Debug.Log("Iniciando ataque ao player...");
+        yield return new WaitForSeconds(zombieAnim.GetCurrentAnimatorStateInfo(0).length / 2);
+        
+        if (target != null && Vector3.Distance(target.transform.position, transform.position) <= 1.8f)
         {
-            player.getHitZombie(damage); // Aplica dano ao jogador
+            Debug.Log("Causando " + damage + " de dano no player!");
+            player.getHitZombie(damage);
+        }
+        else
+        {
+            Debug.Log("Player fora de alcance apÃ³s a animaÃ§Ã£o de ataque.");
+            ResetTargetAndMovement();
+        }
+        hasAttacked = false;
+    }
+
+    private void UpdateAnimationLayers(bool isMoving)
+    {
+        int movementLayerIndex = zombieAnim.GetLayerIndex("Walking Layer");
+        int combatLayerIndex = zombieAnim.GetLayerIndex("Combat Layer");
+        
+        if (movementLayerIndex != -1 && combatLayerIndex != -1)
+        {
+            zombieAnim.SetLayerWeight(movementLayerIndex, isMoving ? 1 : 0);
+            zombieAnim.SetLayerWeight(combatLayerIndex, isMoving ? 0 : 1);
+        }
+        else
+        {
+            Debug.LogWarning("Invalid layer index detected.");
         }
     }
 
-    // Método para o zumbi receber dano
+    private void ResetTargetAndMovement()
+    {
+        Debug.Log("Resetando target e movimento...");
+        if (AIpath != null) AIpath.canMove = true;
+        target = null;
+        hasAttacked = false;
+        UpdateAnimationLayers(true);
+    }
+
+    private void TriggerAttackAnimation()
+    {
+        Debug.Log("Iniciando animaÃ§Ã£o de ataque...");
+        int movementLayerIndex = zombieAnim.GetLayerIndex("Walking Layer");
+        int combatLayerIndex = zombieAnim.GetLayerIndex("Combat Layer");
+        
+        if (movementLayerIndex != -1 && combatLayerIndex != -1)
+        {
+            zombieAnim.SetTrigger("RightAttackTrigger");
+            zombieAnim.SetLayerWeight(movementLayerIndex, 0);
+            zombieAnim.SetLayerWeight(combatLayerIndex, 1);
+        }
+        else
+        {
+            Debug.LogWarning("Invalid layer index detected.");
+        }
+    }
+    // Mï¿½todo para o zumbi receber dano
     public void TakeDamage(int damage)
     {
         currentHealth -= damage; // Reduz a vida atual do zumbi
@@ -189,7 +209,7 @@ public class ZombieManager : MonoBehaviour
         UpdateHealthBar(); // Atualiza a barra de vida
     }
 
-    // Método para destruir o zumbi
+    // Mï¿½todo para destruir o zumbi
     void Die()
     {
         Destroy(gameObject);

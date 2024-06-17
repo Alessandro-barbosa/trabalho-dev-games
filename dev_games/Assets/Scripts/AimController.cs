@@ -8,50 +8,48 @@ using UnityEngine.Animations.Rigging;
 
 public class AimController : MonoBehaviour
 {
-    [SerializeField] private CinemachineVirtualCamera aimVirtualCamera; // Câmera virtual usada para a mira
+    [SerializeField] private CinemachineVirtualCamera aimVirtualCamera; // Cï¿½mera virtual usada para a mira
     [SerializeField] private float normalSensitivity = 1.0f; // Sensibilidade normal do personagem
     [SerializeField] private float aimSensitivity = 0.5f; // Sensibilidade ao mirar
-    [SerializeField] private LayerMask aimColliderLayerMask = new LayerMask(); // Máscara de camada para detectar colisores ao mirar
-    [SerializeField] private Transform debugTransform; // Transform usado para depuração, indicando onde o raio de mira está atingindo
+    [SerializeField] private LayerMask aimColliderLayerMask = new LayerMask(); // Mï¿½scara de camada para detectar colisores ao mirar
+    [SerializeField] private Transform debugTransform; // Transform usado para depuraï¿½ï¿½o, indicando onde o raio de mira estï¿½ atingindo
     [SerializeField] private Transform vfxHitGreen; // Efeito visual para acerto em inimigo
     [SerializeField] private Transform vfxHitRed; // Efeito visual para acerto em objeto
-    [SerializeField] private Transform spawnBulletPosition; // Posição de spawn do projétil da bala
-    [SerializeField] private Transform pfBulletProjectile; // Prefab do projétil da bala
-    [SerializeField] private Rig aimRig; // Rig de animação usado para a mira
-    [SerializeField] private float playerLife = 100f; // Vida do jogador
+    [SerializeField] private Transform spawnBulletPosition; // Posiï¿½ï¿½o de spawn do projï¿½til da bala
+    [SerializeField] private Transform pfBulletProjectile; // Prefab do projï¿½til da bala
+    [SerializeField] private Rig aimRig; // Rig de animaï¿½ï¿½o usado para a mira
+    [SerializeField] private float playerLife; // Vida do jogador
     [SerializeField] private MeshRenderer playerGun; // Renderer da arma do jogador
     [SerializeField] private MeshRenderer playerGunTambor; // Renderer do tambor da arma do jogador
     [SerializeField] private MeshRenderer playerAxe; // Renderer do machado do jogador
-    [SerializeField] private HealthManager healthManager; // Script para gerenciar a saúde do jogador
+    [SerializeField] private HealthManager healthManager; // Script para gerenciar a saï¿½de do jogador
     [SerializeField] private AudioClip audioClip; // Som de tiro
-    [SerializeField] private AudioSource SourceaudioClip; // Fonte de áudio para tocar o som de tiro
+    [SerializeField] private AudioSource SourceaudioClip; // Fonte de ï¿½udio para tocar o som de tiro
     [SerializeField] private int weaponDamage = 10; // Dano da arma
 
     private ThirdPersonController thirdPersonController; // Controlador do personagem em terceira pessoa
     private StarterAssetsInputs starterAssetsInputs; // Script para gerenciar entradas do jogador
-    private Animator animator; // Componente Animator para animações do personagem
-    private AxeManager axe; // Referência ao script AxeManager
-    private float timer = 0f; // Temporizador para ataques
-    private float hitRate = 1f; // Taxa de acerto para ataques
+    private Animator animator; // Componente Animator para animaï¿½ï¿½es do personagem
+    private AxeManager axe; // Referï¿½ncia ao script AxeManager
     private bool isAxeOnHand; // Estado do machado
     private bool isWeaponOnHand = true; // Estado da arma
-    private float buttonPressTime = 0f; // Temporizador para pressionar o botão
-    private float delayTime = 0.3f; // Tempo de atraso para o botão
+    private float buttonPressTime = 0f; // Temporizador para pressionar o botï¿½o
+    private float delayTime = 0.3f; // Tempo de atraso para o botï¿½o
     private float delayTimeAxe = 2f;
     private float btnAxePressTime = 0f;
 
-    private GameObject bola; // Referência ao objeto alvo
-    private ZombieManager enemyTarget; // Referência ao script ZombieManager do inimigo
+    private GameObject bola; // Referï¿½ncia ao objeto alvo
+    private ZombieManager enemyTarget; // Referï¿½ncia ao script ZombieManager do inimigo
 
     private void Start()
     {
-        // Inicializa as referências aos componentes necessários
+        // Inicializa as referï¿½ncias aos componentes necessï¿½rios
         thirdPersonController = GetComponent<ThirdPersonController>();
         starterAssetsInputs = GetComponent<StarterAssetsInputs>();
         animator = GetComponent<Animator>();
         axe = GameObject.FindGameObjectWithTag("axe")?.GetComponent<AxeManager>();
-
-        // Desabilita a física do machado e esconde o machado
+        playerLife = 100f;
+        // Desabilita a fï¿½sica do machado e esconde o machado
         if (axe != null)
         {
             axe.disableRigidBodyAxe();
@@ -62,10 +60,10 @@ public class AimController : MonoBehaviour
 
     private void Update()
     {
-        HandleAiming(); // Gerencia a lógica de mira
+        HandleAiming(); // Gerencia a lï¿½gica de mira
         HandleWeaponSwitch(); // Gerencia a troca de armas
-        HandleShooting(); // Gerencia a lógica de tiro
-        HandleAxe(); // Gerencia a lógica do machado
+        HandleShooting(); // Gerencia a lï¿½gica de tiro
+        HandleAxe(); // Gerencia a lï¿½gica do machado
     }
 
     private void HandleAiming()
@@ -74,7 +72,7 @@ public class AimController : MonoBehaviour
         Vector2 screenCenterPoint = new Vector2(Screen.width / 2f, Screen.height / 2f);
         Ray ray = Camera.main.ScreenPointToRay(screenCenterPoint);
 
-        // Lança um raio a partir da câmera para detectar o alvo
+        // Lanï¿½a um raio a partir da cï¿½mera para detectar o alvo
         if (Physics.Raycast(ray, out RaycastHit raycastHit, 999f, aimColliderLayerMask))
         {
             debugTransform.position = raycastHit.point;
@@ -86,11 +84,11 @@ public class AimController : MonoBehaviour
         // Se o jogador estiver mirando
         if (starterAssetsInputs.aim && isWeaponOnHand)
         {
-            aimVirtualCamera.gameObject.SetActive(true); // Ativa a câmera de mira
+            aimVirtualCamera.gameObject.SetActive(true); // Ativa a cï¿½mera de mira
             thirdPersonController.SetSensitivity(aimSensitivity); // Ajusta a sensibilidade da mira
-            thirdPersonController.SetRotateOnMove(false); // Desabilita a rotação ao mover
+            thirdPersonController.SetRotateOnMove(false); // Desabilita a rotaï¿½ï¿½o ao mover
 
-            // Ajusta a animação do personagem ao mirar
+            // Ajusta a animaï¿½ï¿½o do personagem ao mirar
             animator.SetLayerWeight(1, Mathf.Lerp(animator.GetLayerWeight(1), 1f, Time.deltaTime * 10f));
 
             Vector3 worldAimTarget = mouseWorldPosition;
@@ -103,11 +101,11 @@ public class AimController : MonoBehaviour
         }
         else
         {
-            aimVirtualCamera.gameObject.SetActive(false); // Desativa a câmera de mira
+            aimVirtualCamera.gameObject.SetActive(false); // Desativa a cï¿½mera de mira
             thirdPersonController.SetSensitivity(normalSensitivity); // Ajusta a sensibilidade normal
-            thirdPersonController.SetRotateOnMove(true); // Habilita a rotação ao mover
+            thirdPersonController.SetRotateOnMove(true); // Habilita a rotaï¿½ï¿½o ao mover
 
-            // Ajusta a animação do personagem ao não mirar
+            // Ajusta a animaï¿½ï¿½o do personagem ao nï¿½o mirar
             animator.SetLayerWeight(1, Mathf.Lerp(animator.GetLayerWeight(1), 0f, Time.deltaTime * 10f));
             aimRig.weight = 0f; // Ajusta o peso do rig de mira para zero
             buttonPressTime = 0f;
@@ -130,10 +128,10 @@ public class AimController : MonoBehaviour
         if (starterAssetsInputs.getAxe)
         {
             isWeaponOnHand = false;
-            aimVirtualCamera.gameObject.SetActive(false); // Desativa a câmera de mira
+            aimVirtualCamera.gameObject.SetActive(false); // Desativa a cï¿½mera de mira
             thirdPersonController.SetSensitivity(normalSensitivity); // Ajusta a sensibilidade normal
-            thirdPersonController.SetRotateOnMove(true); // Habilita a rotação ao mover
-            animator.SetLayerWeight(1, 0); // Ajusta o peso da camada de animação para zero
+            thirdPersonController.SetRotateOnMove(true); // Habilita a rotaï¿½ï¿½o ao mover
+            animator.SetLayerWeight(1, 0); // Ajusta o peso da camada de animaï¿½ï¿½o para zero
             aimRig.weight = 0f; // Ajusta o peso do rig de mira para zero
             buttonPressTime = 0f;
 
@@ -146,17 +144,17 @@ public class AimController : MonoBehaviour
 
     private void HandleShooting()
     {
-        // Se o jogador estiver atirando e tiver a arma na mão
+        // Se o jogador estiver atirando e tiver a arma na mï¿½o
         if (starterAssetsInputs.shoot && isWeaponOnHand && buttonPressTime > delayTime)
         {
-            animator.SetLayerWeight(2, 1); // Ajusta o peso da camada de animação de tiro
-            animator.SetTrigger("Shooting_T"); // Dispara a animação de tiro
+            animator.SetLayerWeight(2, 1); // Ajusta o peso da camada de animaï¿½ï¿½o de tiro
+            animator.SetTrigger("Shooting_T"); // Dispara a animaï¿½ï¿½o de tiro
 
             if (enemyTarget != null)
             {
                 Transform vfx = Instantiate(vfxHitGreen, debugTransform.position, Quaternion.identity); // Efeito visual de acerto em inimigo
                 enemyTarget.TakeDamage(weaponDamage); // Aplica dano ao inimigo
-                Destroy(vfx.gameObject, 1f); // Destroi o efeito visual após 1 segundo
+                Destroy(vfx.gameObject, 1f); // Destroi o efeito visual apï¿½s 1 segundo
             }
             else
             {
@@ -165,7 +163,7 @@ public class AimController : MonoBehaviour
                 {
                     Destroy(bola); // Destroi o objeto
                 }
-                Destroy(vfx.gameObject, 1f); // Destroi o efeito visual após 1 segundo
+                Destroy(vfx.gameObject, 1f); // Destroi o efeito visual apï¿½s 1 segundo
             }
 
             SourceaudioClip.PlayOneShot(audioClip); // Toca o som de tiro
@@ -173,7 +171,7 @@ public class AimController : MonoBehaviour
         }
         else
         {
-            animator.SetLayerWeight(2, Mathf.Lerp(animator.GetLayerWeight(1), 0f, Time.deltaTime * 20f)); // Ajusta o peso da camada de animação de tiro
+            animator.SetLayerWeight(2, Mathf.Lerp(animator.GetLayerWeight(1), 0f, Time.deltaTime * 20f)); // Ajusta o peso da camada de animaï¿½ï¿½o de tiro
         }
     }
 
@@ -183,8 +181,8 @@ public class AimController : MonoBehaviour
         if (!isWeaponOnHand && starterAssetsInputs.shoot && btnAxePressTime >= delayTimeAxe)
         {
             int layerIndex = animator.GetLayerIndex("AxeHit");
-            animator.SetLayerWeight(layerIndex, 0.8f); // Ajusta o peso da camada de animação de ataque com machado
-            animator.SetTrigger("axeHit"); // Dispara a animação de ataque com machado
+            animator.SetLayerWeight(layerIndex, 0.8f); // Ajusta o peso da camada de animaï¿½ï¿½o de ataque com machado
+            animator.SetTrigger("axeHit"); // Dispara a animaï¿½ï¿½o de ataque com machado
             axe.disableRigidBodyAxe();
             btnAxePressTime = 0;
             StartCoroutine(AxeHitDelay());
@@ -196,10 +194,14 @@ public class AimController : MonoBehaviour
 
     public void getHitZombie(float damage)
     {
+        Debug.Log("Vida do player antes de tomar dano: " + playerLife);
+        Debug.Log("Player tomando " + damage + " de dano!");
         healthManager.TakeDamage(damage); // Aplica dano ao jogador
         playerLife -= damage; // Reduz a vida do jogador
+        Debug.Log("Vida do player apÃ³s tomar dano: " + playerLife);
         if (playerLife <= 0)
         {
+            Debug.Log("Player MORREU com " + playerLife + " de vida!");
             PauseGame(); // Pausa o jogo se a vida do jogador chegar a zero
         }
     }
