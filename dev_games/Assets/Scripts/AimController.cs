@@ -5,14 +5,15 @@ using Cinemachine;
 using StarterAssets;
 using UnityEngine.InputSystem;
 using UnityEngine.Animations.Rigging;
+using UnityEngine.SceneManagement;
 
 public class AimController : MonoBehaviour
 {
-    [SerializeField] private CinemachineVirtualCamera aimVirtualCamera; // C�mera virtual usada para a mira
+    [SerializeField] private CinemachineVirtualCamera aimVirtualCamera; // Camera virtual usada para a mira
     [SerializeField] private float normalSensitivity = 1.0f; // Sensibilidade normal do personagem
     [SerializeField] private float aimSensitivity = 0.5f; // Sensibilidade ao mirar
-    [SerializeField] private LayerMask aimColliderLayerMask = new LayerMask(); // M�scara de camada para detectar colisores ao mirar
-    [SerializeField] private Transform debugTransform; // Transform usado para depura��o, indicando onde o raio de mira est� atingindo
+    [SerializeField] private LayerMask aimColliderLayerMask = new LayerMask(); // Mascara de camada para detectar colisores ao mirar
+    [SerializeField] private Transform debugTransform; // Transform usado para depuração, indicando onde o raio de mira est� atingindo
     [SerializeField] private Transform vfxHitGreen; // Efeito visual para acerto em inimigo
     [SerializeField] private Transform vfxHitRed; // Efeito visual para acerto em objeto
     [SerializeField] private Transform spawnBulletPosition; // Posi��o de spawn do proj�til da bala
@@ -29,15 +30,15 @@ public class AimController : MonoBehaviour
 
     private ThirdPersonController thirdPersonController; // Controlador do personagem em terceira pessoa
     private StarterAssetsInputs starterAssetsInputs; // Script para gerenciar entradas do jogador
-    private Animator animator; // Componente Animator para anima��es do personagem
-    private AxeManager axe; // Refer�ncia ao script AxeManager
+    private Animator animator; // Componente Animator para animações do personagem
+    private AxeManager axe; // Referencia ao script AxeManager
     private bool isAxeOnHand; // Estado do machado
     private bool isWeaponOnHand = true; // Estado da arma
     private float buttonPressTime = 0f; // Temporizador para pressionar o bot�o
     private float delayTime = 0.3f; // Tempo de atraso para o bot�o
     private float delayTimeAxe = 2f;
     private float btnAxePressTime = 0f;
-
+    private MenuManager menuManager;
     private GameObject bola; // Refer�ncia ao objeto alvo
     private ZombieManager enemyTarget; // Refer�ncia ao script ZombieManager do inimigo
 
@@ -47,6 +48,7 @@ public class AimController : MonoBehaviour
         thirdPersonController = GetComponent<ThirdPersonController>();
         starterAssetsInputs = GetComponent<StarterAssetsInputs>();
         animator = GetComponent<Animator>();
+        menuManager = FindObjectOfType<MenuManager>();
         axe = GameObject.FindGameObjectWithTag("axe")?.GetComponent<AxeManager>();
         playerLife = 100f;
         // Desabilita a f�sica do machado e esconde o machado
@@ -60,10 +62,10 @@ public class AimController : MonoBehaviour
 
     private void Update()
     {
-        HandleAiming(); // Gerencia a l�gica de mira
+        HandleAiming(); // Gerencia a lógica de mira
         HandleWeaponSwitch(); // Gerencia a troca de armas
-        HandleShooting(); // Gerencia a l�gica de tiro
-        HandleAxe(); // Gerencia a l�gica do machado
+        HandleShooting(); // Gerencia a lógica de tiro
+        HandleAxe(); // Gerencia a lógica do machado
     }
 
     private void HandleAiming()
@@ -215,6 +217,10 @@ public class AimController : MonoBehaviour
     private void PauseGame()
     {
         Time.timeScale = 0; // Pausa o tempo do jogo
+        Cursor.lockState = CursorLockMode.None;
+        Vector3 cameraPosition = Camera.main.transform.position;
+        //menuManager.cameraPosition(cameraPosition);
+        SceneManager.LoadScene("ResetButton", LoadSceneMode.Additive);
     }
 
     private void ToggleMeshRenderer()
