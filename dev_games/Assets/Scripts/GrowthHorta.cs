@@ -6,14 +6,15 @@ public class GrowthHorta : MonoBehaviour
 {
     private AimController player;
 
-    private const float TEMPO_CHANCE = 5f; // Intervalo de tempo para verificar crescimento
+    private  float TEMPO_CHANCE = 60f; // Intervalo de tempo para verificar crescimento
     private const float TAMANHO_CRESCIMENTO = 0.05f; // Incremento de tamanho ao crescer
     private const int CHANCE_CRESCER = 10; // Chance percentual de crescimento
+    private HortaManager pai;
 
     public float tempoCrescimento;
     public int estagioDeCrescimento = 0;
 
-    // Enumerador para os estágios de crescimento
+    // Enumerador para os estï¿½gios de crescimento
     private enum Estagio
     {
         Inicial,
@@ -21,16 +22,19 @@ public class GrowthHorta : MonoBehaviour
         Final
     }
 
-    // Start é chamado antes do primeiro frame
+    // Start ï¿½ chamado antes do primeiro frame
     void Start()
     {
+        pai = GameObject.FindGameObjectWithTag("Horta").GetComponent<HortaManager>();
+
         player = GameObject.FindGameObjectWithTag("Player").GetComponent<AimController>();
         HortaReset();
     }
 
-    // Update é chamado uma vez por frame
+    // Update ï¿½ chamado uma vez por frame
     void Update()
     {
+        TEMPO_CHANCE = pai.tempoHorta;
         if (estagioDeCrescimento < (int)Estagio.Final)
         {
             tempoCrescimento += Time.deltaTime;
@@ -47,7 +51,7 @@ public class GrowthHorta : MonoBehaviour
         }
     }
 
-    // Tenta fazer a planta crescer com base em uma chance aleatória
+    // Tenta fazer a planta crescer com base em uma chance aleatï¿½ria
     private void TentarCrescer()
     {
         if (CHANCE_CRESCER >= Random.Range(1, 100))
@@ -70,7 +74,7 @@ public class GrowthHorta : MonoBehaviour
         }
     }
 
-    // Define o crescimento intermediário da planta
+    // Define o crescimento intermediï¿½rio da planta
     private void CrescimentoIntermediario()
     {
         if (CompareTag("Alface") || CompareTag("Tomate"))
@@ -107,23 +111,13 @@ public class GrowthHorta : MonoBehaviour
         transform.position = new Vector3(transform.position.x, transform.position.y + incrementoAltura, transform.position.z);
     }
 
-    //// Método chamado quando o jogador clica na planta
-    //private void OnMouseDown()
-    //{
-    //    if (estagioDeCrescimento == (int)Estagio.Final)
-    //    {
-    //        HortaReset();
-    //        player.EatFood(10);
-    //    }
-    //}
-
     // Reseta a planta para o estado inicial
     public void HortaReset()
     {
         estagioDeCrescimento = 0;
         transform.position = new Vector3(transform.position.x, transform.position.y - 20 * TAMANHO_CRESCIMENTO, transform.position.z);
     }
-    //Verifica seo jogador está olhando para a planta
+    //Verifica seo jogador estï¿½ olhando para a planta
     private void VerificarRaycast()
     {
         RaycastHit hit;

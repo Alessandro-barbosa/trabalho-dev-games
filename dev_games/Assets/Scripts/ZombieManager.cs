@@ -17,6 +17,7 @@ public class ZombieManager : MonoBehaviour
     public Image healthBar; // Barra de vida do zumbi
     private bool hasAttacked = false;
     private float timer = 0;
+    private HortaManager horta;
 
 
     // Enumerador para os tipos de zumbis
@@ -39,7 +40,8 @@ public class ZombieManager : MonoBehaviour
         AIpath = GetComponent<AIPath>(); // Obt�m o componente AIPath
         destinationSet = GetComponent<AIDestinationSetter>(); // Obt�m o componente AIDestinationSetter
         player = GameObject.FindGameObjectWithTag("Player").GetComponent<AimController>(); // Obt�m o AimController do jogador
-
+        horta = GameObject.FindGameObjectWithTag("Horta").GetComponent<HortaManager>();
+        
         // Define o alvo do zumbi como o jogador
         if (destinationSet != null && player != null)
         {
@@ -63,7 +65,7 @@ public class ZombieManager : MonoBehaviour
             case Zumbi.Normal:
                 movementLayer = "Walking Layer";
                 AIpath.maxSpeed = 2;
-                damage = 7f;
+                damage = 10f;
                 maxHealth = 100;
                 break;
             case Zumbi.Rapido:
@@ -218,6 +220,7 @@ public class ZombieManager : MonoBehaviour
     // M�todo para destruir o zumbi
     void Die()
     {
+        horta.contadorBuff += 10f;
         Destroy(gameObject);
     }
 
