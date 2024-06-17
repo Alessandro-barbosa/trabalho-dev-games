@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class DayManager : MonoBehaviour
 {
@@ -22,6 +23,11 @@ public class DayManager : MonoBehaviour
     private MeshRenderer n3; // MeshRenderer para a nuvem 3
     private MeshRenderer n4; // MeshRenderer para a nuvem 4
     private MeshRenderer luaa; // MeshRenderer para a lua
+    private float timer = 0;
+    private float timerText = 0;
+    private float counter = 0;
+    private CanvaTextDanger canvaTextDanger;
+    private bool timerTextNight = false;
 
     public SpawnManager spawner; // Referência ao script SpawnManager
 
@@ -42,6 +48,7 @@ public class DayManager : MonoBehaviour
         n3 = nuvem3.GetComponent<MeshRenderer>();
         n4 = nuvem4.GetComponent<MeshRenderer>();
         luaa = lua.GetComponent<MeshRenderer>();
+        canvaTextDanger = FindObjectOfType<CanvaTextDanger>();
         dayCounter = 0;
     }
 
@@ -57,8 +64,38 @@ public class DayManager : MonoBehaviour
             isDay = false; // Define isDay para falso
             StartCoroutine(CheckForZombies()); // Inicia a verificação de zumbis restantes
         }
+        if(isDay)
+            timer += Time.deltaTime;
+        else
+            timer = 0;
+        waveTimer();
+        if(timerTextNight)
+        {
+            timerText += Time.deltaTime;
+            if(timerText >= 5)
+            {
+                
+                canvaTextDanger.textDangerTimer();
+                timerTextNight = false;
+                timerText = 0;
+            }
+        }
     }
 
+    void applyDay()
+    {
+        if (isDay)
+        {
+            isDay = false; // Define isDay para falso
+            SetNoite(); // Muda para noite
+            dayCounter++; // Incrementa o contador de dias
+            spawner.StartWave(dayCounter); // Inicia uma nova onda de inimigos
+            canvaTextDanger.textDangerTimer();
+            StartCoroutine(CheckForZombies()); // Inicia a verificação de zumbis restantes
+            canvaTextDanger.textDanger.text = ($"Cuidado noite {counter += 1} iniciando").ToString();
+            timerTextNight = true;
+        }
+    }
     // Método para definir o cenário para o dia
     void SetDia()
     {
@@ -157,6 +194,13 @@ public class DayManager : MonoBehaviour
             {
                 SetDia(); // Muda para dia
             }
+        }
+    }
+    public void waveTimer()
+    {
+        if(timer >= 5)
+        {
+            applyDay();            
         }
     }
 }

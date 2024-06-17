@@ -15,6 +15,7 @@ public class TreeManager : MonoBehaviour
     private bool canDestroy = true;
     private float respawnTimer = 0;
     private MeshRenderer tocoMesh;
+    private BoxCollider  treeBoxCollider;
 
     // Start is called before the first frame update
     void Start()
@@ -64,6 +65,8 @@ public class TreeManager : MonoBehaviour
             Vector3 position = transform.position;
             Quaternion rotation = transform.rotation;
             meshTree.enabled = false;
+            treeBoxCollider = treeGameObject.GetComponent<BoxCollider>();
+            treeBoxCollider.enabled = false;
             canDestroy = false;
             Instantiate(toco, position, rotation);
         }
@@ -78,6 +81,7 @@ public class TreeManager : MonoBehaviour
             canDestroy = true;
             respawnTimer = 0;
             treeLife = 10;
+            treeBoxCollider.enabled = true;
         }
     }
     private void filhosdeToco()
