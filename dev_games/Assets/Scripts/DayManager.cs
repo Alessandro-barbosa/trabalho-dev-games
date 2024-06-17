@@ -201,7 +201,7 @@ public class DayManager : MonoBehaviour
     }
     public void waveTimer()
     {
-        if(timer >= 5)
+        if(timer >= 60)
         {
             applyDay();            
         }

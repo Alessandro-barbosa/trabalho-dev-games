@@ -10,8 +10,7 @@ public class MenuManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        if(camPosition != null)
-            Camera.main.transform.position = camPosition;
+       
     }
 
     // Update is called once per frame
@@ -22,7 +21,11 @@ public class MenuManager : MonoBehaviour
     
     public void changeScene()
     {
-        Cursor.lockState = CursorLockMode.Locked;
+        SceneManager.LoadScene(sceneName, LoadSceneMode.Single);
+    }
+
+    public void changeScenePrincipal()
+    {
         Time.timeScale = 1;
         SceneManager.LoadScene(sceneName, LoadSceneMode.Single);
     }

@@ -44,6 +44,7 @@ public class AimController : MonoBehaviour
 
     private void Start()
     {
+        Cursor.lockState = CursorLockMode.Locked;
         // Inicializa as refer�ncias aos componentes necess�rios
         thirdPersonController = GetComponent<ThirdPersonController>();
         starterAssetsInputs = GetComponent<StarterAssetsInputs>();
@@ -218,8 +219,10 @@ public class AimController : MonoBehaviour
     {
         Time.timeScale = 0; // Pausa o tempo do jogo
         Cursor.lockState = CursorLockMode.None;
-        Vector3 cameraPosition = Camera.main.transform.position;
-        //menuManager.cameraPosition(cameraPosition);
+        Cursor.visible = true;
+        GameObject mainCamera = GameObject.FindWithTag("MainCamera");
+        CameraPositionManager.Instance.SetCameraPosition(mainCamera.transform.position);
+        // Carrega a cena "CenaNova" e define a posição da câmera como a posição atual
         SceneManager.LoadScene("ResetButton", LoadSceneMode.Additive);
     }
 
