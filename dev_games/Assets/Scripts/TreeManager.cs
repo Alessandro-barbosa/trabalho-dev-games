@@ -75,7 +75,7 @@ public class TreeManager : MonoBehaviour
 
     public void respawnTree()
     {
-        if(respawnTimer >= 5)
+        if(respawnTimer >= 300)
         {
             Destroy(tocoPath);
             meshTree.enabled = true;

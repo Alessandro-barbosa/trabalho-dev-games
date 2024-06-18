@@ -110,7 +110,9 @@ public class UpgradeManager : MonoBehaviour
                     woodCanva.minusLogWood(10);
                     break;
                 }
+
         }
+        counterNow = 0;
     }
 
     string GetNextCercaName(string currentName) //Pega o nome do proximo upgrade
